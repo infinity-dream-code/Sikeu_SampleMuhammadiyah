@@ -10,12 +10,10 @@
         }
 
         const boot = window.DATA_TAGIHAN_BOOT || {};
-        const columnUrl = boot.columnUrl || '';
         const dataUrl = boot.dataUrl || '';
-        const prefetchedColumns = Array.isArray(boot.prefetchedColumns) ? boot.prefetchedColumns : [];
 
         if (!dataUrl) {
-            console.error('Data Tagihan: dataUrl kosong', boot);
+            console.error('Data Tagihan: dataUrl kosong');
             return;
         }
 
@@ -29,9 +27,8 @@
 
         window.__dataTagihanTableBooted = true;
 
-        // 🔥 FIX: Gunakan dataColumns dari prefetchedColumns
-        const dataColumns = prefetchedColumns.length > 0 ? prefetchedColumns : [
-            { data: 'detail_group', name: '+' },
+        var dataColumns = [
+            { data: 'detail_group', name: '+', orderable: false, className: 'text-center' },
             { data: 'NOCUST', name: 'NIS' },
             { data: 'NUM2ND', name: 'NO DAFT' },
             { data: 'NOVA', name: 'NO VA' },
@@ -40,30 +37,30 @@
             { data: 'DESC02', name: 'Kelas' },
             { data: 'DESC03', name: 'Kelompok' },
             { data: 'BILLAC', name: 'Periode' },
-            { data: 'JUMLAH_TAGIHAN', name: 'Jml Item' },
-            { data: 'BILLAM_TOTAL', name: 'Jumlah Tagihan' },
-            { data: 'BILLPAID', name: 'Jumlah Terbayar' },
-            { data: 'SISA', name: 'Sisa Tagihan' },
+            { data: 'JUMLAH_TAGIHAN', name: 'Jml Item', className: 'text-end' },
+            { data: 'BILLAM_TOTAL', name: 'Jumlah Tagihan', className: 'text-end' },
+            { data: 'BILLPAID', name: 'Jumlah Terbayar', className: 'text-end' },
+            { data: 'SISA', name: 'Sisa Tagihan', className: 'text-end' }
         ];
 
-        const dtOptions = {
+        var dtOptions = {
             tableId: 'main_table',
             formId: 'filter-form',
-            columnUrl: columnUrl,
+            columnUrl: null,
             dataUrl: dataUrl,
-            prefetchedColumns: prefetchedColumns,
-            dataColumns: dataColumns,  // ← PASTIKAN INI TERISI
+            prefetchedColumns: dataColumns,
+            dataColumns: dataColumns,
             thead: true,
-            tfoot: true,
+            tfoot: false,
             scrollX: true,
-            order: [[8, 'desc']],  // ← FIX: indeks 8 = Periode (BILLAC)
+            order: [[8, 'desc']],
             paging: true,
             searching: true,
             fixedHeader: false,
             pageLength: 10,
             lengthMenu: [10, 25, 50, 75, 100],
             select: true,
-            rowId: 'CUSTID',  // ← FIX: pakai CUSTID
+            rowId: 'CUSTID',
             buttons: ['excel', 'pdf', 'print'],
             excelCurrencyTotal: true,
             pdfOrientation: 'landscape',
@@ -73,29 +70,18 @@
             pdfHeaderFontSize: 7,
         };
 
-        console.log('dtOptions:', dtOptions);  // Debug
+        console.log('dtOptions FINAL:', dtOptions);
+        window.dtOptions = dtOptions;
 
-        window.dtOptions = window.dtOptions || dtOptions;
         window.getDT(dtOptions);
 
-        $('#main_table').on('init.dt draw.dt select.dt deselect.dt', function () {
-            if (typeof window.ensureUrutanToolbarButtons === 'function') {
-                window.ensureUrutanToolbarButtons();
-            }
-            if (typeof window.syncTagihanCheckboxSelection === 'function') {
-                window.syncTagihanCheckboxSelection();
-            }
-            if (typeof window.updateUrutanToolbarState === 'function') {
-                window.updateUrutanToolbarState();
-            }
-        });
         $('#main_table').on('draw.dt', function () {
             if (typeof window.closeAllTransLogRows === 'function') {
                 window.closeAllTransLogRows();
             }
         });
 
-        const filterForm = $('#filter-form');
+        var filterForm = $('#filter-form');
         filterForm.on('submit', function (e) {
             e.preventDefault();
             if (typeof window.dataReFilter === 'function') {
