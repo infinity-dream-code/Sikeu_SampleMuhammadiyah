@@ -11,15 +11,12 @@
             background: #f5f7fb;
             border-left: 3px solid #696cff;
         }
-
         .bills-detail-row > td {
             border-left-color: #71dd37;
         }
-
         .trx-log-panel, .bills-panel {
             padding: 0.75rem 1rem 1rem;
         }
-
         .trx-log-panel__header, .bills-panel__header {
             display: flex;
             flex-wrap: wrap;
@@ -27,18 +24,15 @@
             gap: 0.5rem 1rem;
             margin-bottom: 0.75rem;
         }
-
         .trx-log-panel__title, .bills-panel__title {
             font-weight: 600;
             color: #566a7f;
             margin-right: auto;
         }
-
         .trx-log-panel__title i, .bills-panel__title i {
             color: #696cff;
             margin-right: 0.25rem;
         }
-
         .trx-log-chip {
             display: inline-flex;
             align-items: center;
@@ -50,7 +44,6 @@
             border: 1px solid #d9dee3;
             color: #566a7f;
         }
-
         .trx-log-table thead th, .bills-table thead th {
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -59,44 +52,36 @@
             background: #eef0ff !important;
             color: #566a7f;
         }
-
         .bills-table thead th {
             background: #eafbea !important;
         }
-
         .trx-log-table tbody td, .bills-table tbody td {
             font-size: 0.82rem;
             vertical-align: middle;
         }
-
         .trx-log-metode {
             font-size: 0.72rem;
             font-weight: 600;
             letter-spacing: 0.02em;
         }
-
         .trx-log-amount--debet {
             color: #ff3e1d;
             font-weight: 600;
         }
-
         .trx-log-amount--kredit {
             color: #71dd37;
             font-weight: 600;
         }
-
         .trx-log-empty, .bills-empty {
             padding: 1.25rem;
             text-align: center;
             color: #a1acb8;
             font-size: 0.9rem;
         }
-
         .badge-lunas {
             background: #71dd37;
             color: #fff;
         }
-
         .badge-belum-lunas {
             background: #ff9f43;
             color: #fff;
@@ -432,13 +417,127 @@
             prefetchedColumns: @json($tableColumns ?? []),
         };
     </script>
-    <script src="{{asset('js/data-tagihan-init.js')}}?v=20260908-group-view"></script>
+    <script>
+    (function() {
+        function destroyAllDataTables() {
+            if (typeof $ !== 'undefined' && $.fn.dataTable) {
+                $.fn.dataTable.tables({ visible: true, api: true }).each(function() {
+                    try { this.destroy(); } catch(e) {}
+                });
+                if ($.fn.dataTable.isDataTable('#main_table')) {
+                    try { $('#main_table').DataTable().destroy(); } catch(e) {}
+                }
+            }
+            $('.dataTables_wrapper').remove();
+            $('#main_table tbody').empty();
+            $('#main_table thead').empty();
+            $('#main_table').removeClass('dataTable');
+            window.__dataTagihanTableBooted = false;
+        }
+
+        function initTable() {
+            destroyAllDataTables();
+
+            if (typeof window.DATA_TAGIHAN_BOOT === 'undefined' || !window.DATA_TAGIHAN_BOOT.dataUrl) {
+                console.error('DATA_TAGIHAN_BOOT tidak ditemukan');
+                return;
+            }
+
+            if (typeof window.getDT !== 'function') {
+                console.error('getDT tidak ditemukan');
+                return;
+            }
+
+            var cols = [
+                {
+                    data: 'detail_group',
+                    name: '+',
+                    orderable: false,
+                    className: 'text-center',
+                    render: function(d, t, r) {
+                        if (t === 'display') {
+                            return '<button type="button" class="btn btn-sm btn-primary btn-detail-group">+</button>';
+                        }
+                        return d;
+                    }
+                },
+                { data: 'NOCUST', name: 'NIS' },
+                { data: 'NUM2ND', name: 'NO DAFT' },
+                { data: 'NOVA', name: 'NO VA' },
+                { data: 'NMCUST', name: 'NAMA' },
+                { data: 'CODE02', name: 'UNIT' },
+                { data: 'DESC02', name: 'KELAS' },
+                { data: 'DESC03', name: 'KELOMPOK' },
+                { data: 'BILLAC', name: 'PERIODE' },
+                { data: 'JUMLAH_TAGIHAN', name: 'JML ITEM', className: 'text-end' },
+                { data: 'BILLAM_TOTAL', name: 'JUMLAH TAGIHAN', className: 'text-end' },
+                { data: 'BILLPAID', name: 'JUMLAH TERBAYAR', className: 'text-end' },
+                { data: 'SISA', name: 'SISA TAGIHAN', className: 'text-end' }
+            ];
+
+            var opts = {
+                tableId: 'main_table',
+                formId: 'filter-form',
+                columnUrl: null,
+                dataUrl: window.DATA_TAGIHAN_BOOT.dataUrl,
+                prefetchedColumns: cols,
+                dataColumns: cols,
+                destroy: true,
+                retrieve: false,
+                thead: true,
+                tfoot: false,
+                scrollX: true,
+                order: [[8, 'desc']],
+                paging: true,
+                searching: true,
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 75, 100],
+                select: true,
+                rowId: 'CUSTID',
+                buttons: ['excel', 'pdf', 'print'],
+                excelCurrencyTotal: true,
+                pdfOrientation: 'landscape',
+                pdfPageSize: 'A3',
+                pdfMargins: [10, 14, 10, 14],
+                pdfFontSize: 6,
+                pdfHeaderFontSize: 7,
+                columnDefs: [{ targets: [0], orderable: false }]
+            };
+
+            window.getDT(opts);
+            console.log('✅ DataTagihan Table initialized');
+
+            var filterForm = $('#filter-form');
+            filterForm.off('submit').on('submit', function(e) {
+                e.preventDefault();
+                if (typeof window.dataReFilter === 'function') {
+                    window.dataReFilter('main_table');
+                }
+            });
+            filterForm.off('reset').on('reset', function() {
+                setTimeout(function() {
+                    if (typeof window.dataReFilter === 'function') {
+                        window.dataReFilter('main_table');
+                    }
+                    $('[data-control="select2"]', '#filter-form').trigger('change');
+                }, 0);
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(initTable, 300);
+            });
+        } else {
+            setTimeout(initTable, 300);
+        }
+    })();
+    </script>
     <script src="{{asset('main/libs/moment/moment.js')}}"></script>
     <script src="{{asset('main/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js')}}"></script>
 
     <script type="module">
         import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
-
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
     </script>
 
@@ -460,78 +559,7 @@
             return 'Rp. ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         }
 
-        let dtOptions = {
-            tableId: 'main_table',
-            formId: 'filter-form',
-            columnUrl: '{{($columnsUrl??null)}}',
-            dataUrl: '{{($datasUrl??null)}}',
-            prefetchedColumns: window.DATA_TAGIHAN_BOOT?.prefetchedColumns ?? [],
-            dataColumns: [],
-            thead: true,
-            tfoot: true,
-            scrollX: true,
-            order: [[9, 'desc']],
-            paging: true,
-            searching: true,
-            fixedHeader: false,
-            pageLength: 10,
-            lengthMenu: [10, 25, 50, 75, 100],
-            select: true,
-            rowId: null,
-            buttons: ["excel", "pdf", "print"],
-            excelCurrencyTotal: true,
-            pdfOrientation: 'landscape',
-            pdfPageSize: 'A3',
-            pdfMargins: [10, 14, 10, 14],
-            pdfFontSize: 6,
-            pdfHeaderFontSize: 7,
-        };
-
         const billsUrl = window.DATA_TAGIHAN_BOOT?.billsUrl ?? '';
-
-        function initDataTagihanTable() {
-            if (window.__dataTagihanTableBooted) {
-                return;
-            }
-            window.__dataTagihanTableBooted = true;
-            if (!dtOptions.columnUrl || !dtOptions.dataUrl) {
-                console.error('Data Tagihan: URL tabel tidak lengkap', dtOptions);
-                if (typeof errorAlert === 'function') {
-                    errorAlert('Konfigurasi tabel tidak lengkap (columnUrl/dataUrl). Silahkan hubungi admin.');
-                }
-                return;
-            }
-            if (typeof getDT !== 'function') {
-                console.error('Data Tagihan: fungsi getDT tidak ditemukan — script Datatable gagal dimuat');
-                if (typeof errorAlert === 'function') {
-                    errorAlert('Script tabel gagal dimuat. Tekan Ctrl+F5 untuk muat ulang halaman.');
-                }
-                return;
-            }
-            getDT(dtOptions);
-            $(`#${dtOptions.tableId}`).on('draw.dt', function () {
-                closeAllBillsRows();
-            });
-            if (dtOptions.formId) {
-                let filterForm = $(`#${dtOptions.formId}`);
-                filterForm.on('submit', function (e) {
-                    e.preventDefault();
-                    dataReFilter(dtOptions.tableId);
-                });
-                filterForm.on('reset', function (e) {
-                    setTimeout(function () {
-                        dataReFilter(dtOptions.tableId);
-                        const select2InForm = select2.filter(`#${dtOptions.formId} [data-control='select2']`);
-                        if (select2InForm.length) {
-                            select2InForm.each(function () {
-                                let $this = $(this);
-                                $this.trigger('change');
-                            });
-                        }
-                    }, 0);
-                });
-            }
-        }
 
         const modalDeleteElement = document.getElementById('modal-delete');
         const modalDelete = new bootstrap.Modal(document.getElementById('modal-delete'));
@@ -539,13 +567,11 @@
         const modalHapus = new bootstrap.Modal(document.getElementById('modal-hapus'));
 
         modalDeleteElement.addEventListener('hide.bs.modal', function () {
-            const form = document.getElementById('form-delete');
-            form.reset();
+            document.getElementById('form-delete').reset();
         });
 
         modalHapusElement.addEventListener('hide.bs.modal', function () {
-            const form = document.getElementById('form-hapus');
-            form.reset();
+            document.getElementById('form-hapus').reset();
         });
 
         function metodeBadge(metode) {
@@ -813,7 +839,7 @@
             e.stopPropagation();
 
             const $rowEl = $(this).closest('tr');
-            const dtRow = DT[`${dtOptions.tableId}`].row($rowEl);
+            const dtRow = window.DT['main_table'].row($rowEl);
             const rowData = dtRow.data();
             if (!rowData) {
                 warningAlert('Data baris tidak ditemukan.');
@@ -851,7 +877,7 @@
                     const $detailRow = $btn.closest('tr.bills-detail-row');
                     const $groupRow = $detailRow.prev('tr');
                     if ($groupRow.length) {
-                        const dtRow = DT[`${dtOptions.tableId}`].row($groupRow);
+                        const dtRow = window.DT['main_table'].row($groupRow);
                         const rowData = dtRow.data();
                         const bills = await fetchBillsForGroup(rowData.CUSTID, rowData.BILLAC);
                         $detailRow.find('td').first().html(buildBillsTableHtml(rowData, bills));
@@ -914,7 +940,6 @@
         });
 
         function submitForm(form) {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             let request, item_id, user_id, url = null;
             switch (form) {
                 case 'delete':
@@ -967,25 +992,25 @@
                     return data;
                 })
                 .then(data => {
-                    dataReload(dtOptions.tableId);
+                    if (typeof window.dataReload === 'function') {
+                        window.dataReload('main_table');
+                    } else if (window.DT && window.DT.main_table) {
+                        window.DT.main_table.ajax.reload();
+                    }
                     successAlert(data.message);
                     modalDelete.hide();
                     modalHapus.hide();
                 })
                 .catch(error => {
                     if (error.status === 422) {
-                        const errors = error.error || error.errors;
                         errorAlert(error.message);
-                        if (errors) {
-                            processErrors(errors)
-                        }
                     } else {
                         const errorMessages = {
-                            401: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan! <br> jika masalah masih terjadi silahkan login kembali!',
+                            401: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan!',
                             403: 'Anda tidak memiliki izin untuk mengakses halaman ini 😖',
                             404: 'Halaman yang dituju tidak ditemukan 🧐',
                             405: 'Metode tidak valid 🧐 <br>silahkan muat ulang halaman dan coba lagi!',
-                            419: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan! <br> jika masalah masih terjadi silahkan login kembali!',
+                            419: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan!',
                             429: 'Terlalu banyak permintaan akses <br>silahkan tunggu beberapa saat 🙏',
                         };
                         errorAlert(errorMessages[error.status] || "Terjadi kesalahan, silahkan coba memuat ulang halaman");
@@ -1099,9 +1124,6 @@
 
                     const orientation = 'portrait';
                     const pageMargins = [20, 20, 20, 20];
-                    const tanggalSekarang = new Date().toLocaleDateString('id-ID', {
-                        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-                    });
                     const availableWidth = getContentWidth('A4', orientation, pageMargins);
 
                     const headerTable = {
@@ -1218,7 +1240,7 @@
                 e.preventDefault();
                 loadingAlert('Membuat Kartu Siswa');
                 let url = '{{route('admin.keuangan.tagihan-siswa.data-tagihan.cetak-kartu-siswa')}}';
-                let data = DT[`${dtOptions.tableId}`].rows({selected: true}).data();
+                let data = window.DT['main_table'].rows({selected: true}).data();
                 if (!data[0]) {
                     warningAlert('silahkan pilih siswa!')
                     return;
@@ -1249,25 +1271,17 @@
                         throw createError("Data Tagihan Kosong", 422);
                     }
                     const data = await generateKartuSiswa(result);
-                    const pdf = await generatePdf('KARTU TAGIHAN SISWA', data, unit)
-
-                    if (pdf) {
-                        successAlert('Sukses, Rekap telah dicetak');
-                    }
+                    await generatePdf('KARTU TAGIHAN SISWA', data, unit)
                 } catch (error) {
                     if (error.status === 422) {
-                        const errors = error.error || error.errors;
                         errorAlert(error.message);
-                        if (errors) {
-                            processErrors(errors)
-                        }
                     } else {
                         const errorMessages = {
-                            401: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan! <br> jika masalah masih terjadi silahkan login kembali!',
+                            401: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan!',
                             403: 'Anda tidak memiliki izin untuk mengakses halaman ini 😖',
                             404: 'Halaman yang dituju tidak ditemukan 🧐',
                             405: 'Metode tidak valid 🧐 <br>silahkan muat ulang halaman dan coba lagi!',
-                            419: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan! <br> jika masalah masih terjadi silahkan login kembali!',
+                            419: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan!',
                             429: 'Terlalu banyak permintaan akses <br>silahkan tunggu beberapa saat 🙏',
                         };
                         errorAlert(errorMessages[error.status] || "Terjadi kesalahan, silahkan coba memuat ulang halaman");
