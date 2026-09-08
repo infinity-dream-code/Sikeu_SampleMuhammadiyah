@@ -882,7 +882,7 @@ function prepareTableFoot(id) {
     tfoot.innerHTML = '';
 }
 
-let DT = {};
+var DT = {};
 const languageKey = 'datatables_id_language';
 const languageUrl = 'https://cdn.datatables.net/plug-ins/2.0.6/i18n/id.json';
 
