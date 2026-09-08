@@ -1,6 +1,3 @@
-/**
- * Inisialisasi tabel Data Tagihan — script terpisah agar tidak terganggu error JS lain di halaman.
- */
 (function (window, $) {
     'use strict';
 
@@ -11,6 +8,7 @@
 
         const boot = window.DATA_TAGIHAN_BOOT || {};
         const dataUrl = boot.dataUrl || '';
+        const billsUrl = boot.billsUrl || '';
 
         if (!dataUrl) {
             console.error('Data Tagihan: dataUrl kosong');
@@ -28,7 +26,18 @@
         window.__dataTagihanTableBooted = true;
 
         var dataColumns = [
-            { data: 'detail_group', name: '+', orderable: false, className: 'text-center' },
+            { 
+                data: 'detail_group', 
+                name: '+', 
+                orderable: false, 
+                className: 'text-center',
+                render: function(data, type, row) {
+                    if (type === 'display') {
+                        return '<button type="button" class="btn btn-sm btn-primary btn-detail-group">+</button>';
+                    }
+                    return data;
+                }
+            },
             { data: 'NOCUST', name: 'NIS' },
             { data: 'NUM2ND', name: 'NO DAFT' },
             { data: 'NOVA', name: 'NO VA' },
@@ -70,9 +79,7 @@
             pdfHeaderFontSize: 7,
         };
 
-        console.log('dtOptions FINAL:', dtOptions);
         window.dtOptions = dtOptions;
-
         window.getDT(dtOptions);
 
         $('#main_table').on('draw.dt', function () {
