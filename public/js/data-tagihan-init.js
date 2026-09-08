@@ -41,20 +41,21 @@
                         return '<button type="button" class="btn btn-sm btn-primary btn-detail-group">+</button>';
                     }
                     return data;
-                }
+                },
+                defaultContent: ''
             },
-            { data: 'NOCUST', name: 'NIS' },
-            { data: 'NUM2ND', name: 'NO DAFT' },
-            { data: 'NOVA', name: 'NO VA' },
-            { data: 'NMCUST', name: 'NAMA' },
-            { data: 'CODE02', name: 'Unit' },
-            { data: 'DESC02', name: 'Kelas' },
-            { data: 'DESC03', name: 'Kelompok' },
-            { data: 'BILLAC', name: 'Periode' },
-            { data: 'JUMLAH_TAGIHAN', name: 'Jml Item', className: 'text-end' },
-            { data: 'BILLAM_TOTAL', name: 'Jumlah Tagihan', className: 'text-end' },
-            { data: 'BILLPAID', name: 'Jumlah Terbayar', className: 'text-end' },
-            { data: 'SISA', name: 'Sisa Tagihan', className: 'text-end' }
+            { data: 'NOCUST', name: 'NIS', defaultContent: '' },
+            { data: 'NUM2ND', name: 'NO DAFT', defaultContent: '' },
+            { data: 'NOVA', name: 'NO VA', defaultContent: '' },
+            { data: 'NMCUST', name: 'NAMA', defaultContent: '' },
+            { data: 'CODE02', name: 'Unit', defaultContent: '' },
+            { data: 'DESC02', name: 'Kelas', defaultContent: '' },
+            { data: 'DESC03', name: 'Kelompok', defaultContent: '' },
+            { data: 'BILLAC', name: 'Periode', defaultContent: '' },
+            { data: 'JUMLAH_TAGIHAN', name: 'Jml Item', className: 'text-end', defaultContent: '0' },
+            { data: 'BILLAM_TOTAL', name: 'Jumlah Tagihan', className: 'text-end', defaultContent: '0' },
+            { data: 'BILLPAID', name: 'Jumlah Terbayar', className: 'text-end', defaultContent: '0' },
+            { data: 'SISA', name: 'Sisa Tagihan', className: 'text-end', defaultContent: '0' }
         ];
 
         var dtOptions = {
@@ -84,10 +85,22 @@
             pdfMargins: [10, 14, 10, 14],
             pdfFontSize: 6,
             pdfHeaderFontSize: 7,
+            columnDefs: [
+                {
+                    targets: [0],
+                    orderable: false
+                }
+            ]
         };
 
+        console.log('dtOptions FINAL:', dtOptions);
         window.dtOptions = dtOptions;
-        window.getDT(dtOptions);
+
+        try {
+            window.getDT(dtOptions);
+        } catch (e) {
+            console.error('Error saat init tabel:', e);
+        }
 
         $('#main_table').on('draw.dt', function () {
             if (typeof window.closeAllTransLogRows === 'function') {
