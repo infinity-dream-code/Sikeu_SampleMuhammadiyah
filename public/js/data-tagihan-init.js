@@ -22,7 +22,6 @@
             return;
         }
 
-        // 🔥 CEK APAKAH TABEL SUDAH ADA
         if ($.fn.dataTable.isDataTable('#main_table')) {
             console.log('DataTagihan: Tabel sudah ada, hancurkan dulu');
             $('#main_table').DataTable().destroy();
