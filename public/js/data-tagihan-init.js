@@ -29,24 +29,41 @@
 
         window.__dataTagihanTableBooted = true;
 
+        // 🔥 FIX: Gunakan dataColumns dari prefetchedColumns
+        const dataColumns = prefetchedColumns.length > 0 ? prefetchedColumns : [
+            { data: 'detail_group', name: '+' },
+            { data: 'NOCUST', name: 'NIS' },
+            { data: 'NUM2ND', name: 'NO DAFT' },
+            { data: 'NOVA', name: 'NO VA' },
+            { data: 'NMCUST', name: 'NAMA' },
+            { data: 'CODE02', name: 'Unit' },
+            { data: 'DESC02', name: 'Kelas' },
+            { data: 'DESC03', name: 'Kelompok' },
+            { data: 'BILLAC', name: 'Periode' },
+            { data: 'JUMLAH_TAGIHAN', name: 'Jml Item' },
+            { data: 'BILLAM_TOTAL', name: 'Jumlah Tagihan' },
+            { data: 'BILLPAID', name: 'Jumlah Terbayar' },
+            { data: 'SISA', name: 'Sisa Tagihan' },
+        ];
+
         const dtOptions = {
             tableId: 'main_table',
             formId: 'filter-form',
             columnUrl: columnUrl,
             dataUrl: dataUrl,
             prefetchedColumns: prefetchedColumns,
-            dataColumns: [],
+            dataColumns: dataColumns,  // ← PASTIKAN INI TERISI
             thead: true,
             tfoot: true,
             scrollX: true,
-            order: [[15, 'asc']],
+            order: [[8, 'desc']],  // ← FIX: indeks 8 = Periode (BILLAC)
             paging: true,
             searching: true,
             fixedHeader: false,
             pageLength: 10,
             lengthMenu: [10, 25, 50, 75, 100],
             select: true,
-            rowId: 'AA',
+            rowId: 'CUSTID',  // ← FIX: pakai CUSTID
             buttons: ['excel', 'pdf', 'print'],
             excelCurrencyTotal: true,
             pdfOrientation: 'landscape',
@@ -55,6 +72,8 @@
             pdfFontSize: 6,
             pdfHeaderFontSize: 7,
         };
+
+        console.log('dtOptions:', dtOptions);  // Debug
 
         window.dtOptions = window.dtOptions || dtOptions;
         window.getDT(dtOptions);
