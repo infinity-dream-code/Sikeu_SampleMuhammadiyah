@@ -45,7 +45,6 @@ class DataTagihanController extends Controller
     public function __construct()
     {
         $key = Str::slug($this->cacheKey) . '_cache_version';
-
         Cache::add($key, 1);
         $this->middleware(function ($request, $next) {
             if (Auth::check()) {
@@ -74,7 +73,7 @@ class DataTagihanController extends Controller
             $q->where("{$billTable}.PAIDST", 0)
                 ->orWhereNull("{$billTable}.PAIDST")
                 ->orWhereRaw("{$sisaExpr} > 0");
-        });
+        })->where("{$billTable}.FSTSBolehBayar", 1);
     }
 
     private function isBlankPaidDate(mixed $value): bool
@@ -418,7 +417,6 @@ class DataTagihanController extends Controller
                 ->where(function ($q) {
                     $this->applyBelumLunasScope($q);
                 })
-                ->where('scctbill.FSTSBolehBayar', 1)
                 ->whereRaw('CAST(COALESCE(scctcust.STCUST, 0) AS SIGNED) = 1')
                 ->when($filterQuery, function ($query) use ($filterQuery) {
                     $filterQuery($query);
@@ -488,8 +486,7 @@ class DataTagihanController extends Controller
                 ->where('scctbill.CUSTID', $filter['custid']);
 
             $this->applyBelumLunasScope($query);
-            $query->where('scctbill.FSTSBolehBayar', 1)
-                ->whereRaw('CAST(COALESCE(scctcust.STCUST, 0) AS SIGNED) = 1');
+            $query->whereRaw('CAST(COALESCE(scctcust.STCUST, 0) AS SIGNED) = 1');
 
             $this->applyUnitScope($query);
 
@@ -642,7 +639,6 @@ class DataTagihanController extends Controller
         $this->applyBelumLunasScope($query);
         $query
             ->whereRaw('CAST(COALESCE(scctcust.STCUST, 0) AS SIGNED) = 1')
-            ->where('scctbill.FSTSBolehBayar', 1)
             ->when(!blank($searchValue), function ($query) use ($whereAny, $searchValue) {
                 $query->where(function ($q) use ($whereAny, $searchValue) {
                     $sanitizeSearch = str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], $searchValue);
@@ -784,7 +780,6 @@ class DataTagihanController extends Controller
 
         $this->applyBelumLunasScope($query);
         $query
-            ->where('scctbill.FSTSBolehBayar', 1)
             ->whereRaw('CAST(COALESCE(scctcust.STCUST, 0) AS SIGNED) = 1');
 
         $this->applyUnitScope($query);
@@ -1014,7 +1009,6 @@ class DataTagihanController extends Controller
 
                 $this->applyBelumLunasScope($query);
                 $query
-                    ->where('scctbill.FSTSBolehBayar', 1)
                     ->whereRaw('CAST(COALESCE(scctcust.STCUST, 0) AS SIGNED) = 1');
 
                 $this->applyUnitScope($query);
