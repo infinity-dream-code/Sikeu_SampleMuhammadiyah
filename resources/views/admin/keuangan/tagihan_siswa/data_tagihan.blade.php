@@ -136,20 +136,12 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="mb-5">
-                                <label class="form-label" for="tanggal-pembuatan">Tanggal Buat Tagihan<span
-                                        class="text-warning">*</span>(tanggal-bulan-tahun - tanggal-bulan-tahun)</label>
-                                <input type="text" id="tanggal-pembuatan" name="filter[tanggal-pembuatan]"
-                                       placeholder="tanggal/bulan/tahun"
-                                       class="form-control" autocomplete="false" inputmode="numeric"/>
+                                <label class="form-label" for="tanggal-pembuatan">Tanggal Buat Tagihan<span class="text-warning">*</span>(tanggal-bulan-tahun - tanggal-bulan-tahun)</label>
+                                <input type="text" id="tanggal-pembuatan" name="filter[tanggal-pembuatan]" placeholder="tanggal/bulan/tahun" class="form-control" autocomplete="false" inputmode="numeric"/>
                             </div>
                             <div class="mb-5">
-                                <label class="form-label" for="filter_periode">
-                                    Periode
-                                </label>
-                                <select class="form-select" id="filter_periode"
-                                        name="filter[periode]"
-                                        data-control="select2"
-                                        data-placeholder="Pilih Periode">
+                                <label class="form-label" for="filter_periode">Periode</label>
+                                <select class="form-select" id="filter_periode" name="filter[periode]" data-control="select2" data-placeholder="Pilih Periode">
                                     <option value="all">Semua</option>
                                     @isset($periode)
                                         @foreach($periode as $item)
@@ -161,18 +153,11 @@
                                 </select>
                             </div>
                             <div class="mb-5">
-                                <label class="form-label" for="post">
-                                    Nama Tagihan
-                                </label>
-                                <select class="form-select" id="post"
-                                        name="filter[post][]"
-                                        multiple
-                                        data-control="select2"
-                                        data-placeholder="Pilih Nama Tagihan">
+                                <label class="form-label" for="post">Nama Tagihan</label>
+                                <select class="form-select" id="post" name="filter[post][]" multiple data-control="select2" data-placeholder="Pilih Nama Tagihan">
                                     @isset($post)
                                         @foreach($post as $item)
-                                            <option
-                                                value="{{$item->tagihan}}">{{$item->tagihan}}</option>
+                                            <option value="{{$item->tagihan}}">{{$item->tagihan}}</option>
                                         @endforeach
                                     @else
                                         <option>data kosong</option>
@@ -182,18 +167,12 @@
                         </div>
                         <div class="col">
                             <div class="col mb-5">
-                                <label class="form-label" for="filter[angkatan]]">
-                                    Angkatan Siswa
-                                </label>
-                                <select class="form-select" id="filter[angkatan]"
-                                        name="filter[angkatan]"
-                                        data-control="select2"
-                                        data-placeholder="Pilih Angkatan Siswa">
+                                <label class="form-label" for="filter[angkatan]]">Angkatan Siswa</label>
+                                <select class="form-select" id="filter[angkatan]" name="filter[angkatan]" data-control="select2" data-placeholder="Pilih Angkatan Siswa">
                                     <option value="all">Semua</option>
                                     @isset($thn_aka)
                                         @foreach($thn_aka as $item)
-                                            <option
-                                                value="{{$item->thn_aka}}">{{$item->thn_aka}}</option>
+                                            <option value="{{$item->thn_aka}}">{{$item->thn_aka}}</option>
                                         @endforeach
                                     @else
                                         <option>data kosong</option>
@@ -201,17 +180,12 @@
                                 </select>
                             </div>
                             <div class="col mb-5">
-                                <label class="form-label" for="filter[kelas]">
-                                    Kelas
-                                </label>
-                                <select class="form-select" id="filter[kelas]" name="filter[kelas]"
-                                        data-control="select2" data-placeholder="Pilih Kelas">
+                                <label class="form-label" for="filter[kelas]">Kelas</label>
+                                <select class="form-select" id="filter[kelas]" name="filter[kelas]" data-control="select2" data-placeholder="Pilih Kelas">
                                     <option value="all">Semua</option>
                                     @isset($kelas)
                                         @foreach($kelas as $item)
-                                            <option
-                                                value="{{$item->unit}}~~{{$item->jenjang}}~~{{$item->kelas}}">{{$item->unit}}
-                                                - {{$item->jenjang}} {{$item->kelas}}</option>
+                                            <option value="{{$item->unit}}~~{{$item->jenjang}}~~{{$item->kelas}}">{{$item->unit}} - {{$item->jenjang}} {{$item->kelas}}</option>
                                         @endforeach
                                     @else
                                         <option>data kosong</option>
@@ -219,31 +193,24 @@
                                 </select>
                             </div>
                             <div class="col mb-5">
-                                <label class="form-label" for="filter[siswa]">
-                                    Siswa
-                                </label>
-                                <input class="form-control" id="filter[siswa]" name="filter[siswa]"
-                                       placeholder="Masukkan NIS/NAMA Siswa" data-placeholder="Pilih siswa">
+                                <label class="form-label" for="filter[siswa]">Siswa</label>
+                                <input class="form-control" id="filter[siswa]" name="filter[siswa]" placeholder="Masukkan NIS/NAMA Siswa" data-placeholder="Pilih siswa">
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="d-flex justify-content-center flex-column flex-md-row justify-content-md-end gap-4">
                             <button type="button" class="btn btn-facebook" id="cetak-kartu-siswa">
-                                <span class="ri-info-card-line me-2"></span>
-                                Cetak Kartu Siswa
+                                <span class="ri-info-card-line me-2"></span> Cetak Kartu Siswa
                             </button>
                             <button type="button" class="btn btn-google-plus btn-print-rekap">
-                                <span class="ri-file-pdf-2-line me-2"></span>
-                                Cetak Rekap
+                                <span class="ri-file-pdf-2-line me-2"></span> Cetak Rekap
                             </button>
                             <button type="reset" class="btn btn-secondary">
-                                <span class="ri-reset-left-line me-2"></span>
-                                Reset
+                                <span class="ri-reset-left-line me-2"></span> Reset
                             </button>
                             <button type="submit" class="btn btn-primary">
-                                <span class="ri-search-line me-2"></span>
-                                Cari
+                                <span class="ri-search-line me-2"></span> Cari
                             </button>
                         </div>
                     </div>
@@ -251,67 +218,154 @@
             </form>
         </div>
         <div class="card-datatable table-responsive text-nowrap">
-            <table class="table table-sm table-bordered table-hover"
-                   id="main_table">
-                <thead class="table-light">
-
-                </thead>
-                <tbody>
-
-                </tbody>
+            <table class="table table-sm table-bordered table-hover" id="main_table">
+                <thead class="table-light"></thead>
+                <tbody></tbody>
             </table>
         </div>
     </div>
 @endsection
 
 @section('script')
+<script>
+(function() {
+    function destroyAllDataTables() {
+        if (typeof $ !== 'undefined' && $.fn.dataTable) {
+            $.fn.dataTable.tables({ visible: true, api: true }).each(function() {
+                try { this.destroy(); } catch(e) {}
+            });
+            if ($.fn.dataTable.isDataTable('#main_table')) {
+                try { $('#main_table').DataTable().destroy(); } catch(e) {}
+            }
+        }
+        $('.dataTables_wrapper').remove();
+        $('#main_table tbody').empty();
+        $('#main_table thead').empty();
+        $('#main_table').removeClass('dataTable');
+        window.__dataTagihanTableBooted = false;
+    }
+
+    function initTable() {
+        destroyAllDataTables();
+
+        if (typeof window.DATA_TAGIHAN_BOOT === 'undefined' || !window.DATA_TAGIHAN_BOOT.dataUrl) {
+            console.error('DATA_TAGIHAN_BOOT tidak ditemukan');
+            return;
+        }
+
+        if (typeof window.getDT !== 'function') {
+            console.error('getDT tidak ditemukan');
+            return;
+        }
+
+        var cols = [
+            {
+                data: 'detail_group',
+                name: '+',
+                orderable: false,
+                className: 'text-center',
+                render: function(d, t, r) {
+                    if (t === 'display') {
+                        return '<button type="button" class="btn btn-sm btn-primary btn-detail-group">+</button>';
+                    }
+                    return d;
+                }
+            },
+            { data: 'NOCUST', name: 'NIS' },
+            { data: 'NUM2ND', name: 'NO DAFT' },
+            { data: 'NOVA', name: 'NO VA' },
+            { data: 'NMCUST', name: 'NAMA' },
+            { data: 'CODE02', name: 'UNIT' },
+            { data: 'DESC02', name: 'KELAS' },
+            { data: 'DESC03', name: 'KELOMPOK' },
+            { data: 'BILLAC', name: 'PERIODE' },
+            { data: 'JUMLAH_TAGIHAN', name: 'JML ITEM', className: 'text-end' },
+            { data: 'BILLAM_TOTAL', name: 'JUMLAH TAGIHAN', className: 'text-end' },
+            { data: 'BILLPAID', name: 'JUMLAH TERBAYAR', className: 'text-end' },
+            { data: 'SISA', name: 'SISA TAGIHAN', className: 'text-end' }
+        ];
+
+        var opts = {
+            tableId: 'main_table',
+            formId: 'filter-form',
+            columnUrl: null,
+            dataUrl: window.DATA_TAGIHAN_BOOT.dataUrl,
+            prefetchedColumns: cols,
+            dataColumns: cols,
+            destroy: true,
+            retrieve: false,
+            thead: true,
+            tfoot: false,
+            scrollX: true,
+            order: [[8, 'desc']],
+            paging: true,
+            searching: true,
+            pageLength: 10,
+            lengthMenu: [10, 25, 50, 75, 100],
+            select: true,
+            rowId: 'CUSTID',
+            buttons: ['excel', 'pdf', 'print'],
+            excelCurrencyTotal: true,
+            pdfOrientation: 'landscape',
+            pdfPageSize: 'A3',
+            pdfMargins: [10, 14, 10, 14],
+            pdfFontSize: 6,
+            pdfHeaderFontSize: 7,
+            columnDefs: [{ targets: [0], orderable: false }]
+        };
+
+        window.getDT(opts);
+        console.log('✅ DataTagihan Table initialized');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initTable, 500);
+        });
+    } else {
+        setTimeout(initTable, 500);
+    }
+})();
+</script>
+
     <form id="form-delete" class="mainForm">
-        <div class="modal modal-blur fade" id="modal-delete" tabindex="-1" role="dialog" aria-hidden="true"
-             data-bs-backdrop="static">
+        <div class="modal modal-blur fade" id="modal-delete" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-status bg-danger"></div>
                     <div class="modal-header ">
-                        <div class="modal-title" id="delete-modal-header">
-                            Reversal
-                        </div>
+                        <div class="modal-title" id="delete-modal-header">Reversal</div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-capitalize text-center py-4">
                         <span class="ri-arrow-go-back-line ri-3x"></span>
                         <h4 id="delete-modal-title">Reversal Pembayaran?</h4>
-                        <div id="delete-modal-desc">
-                            Anda yakin akan melakukan reversal pembayaran terakhir?
-                        </div>
+                        <div id="delete-modal-desc">Anda yakin akan melakukan reversal pembayaran terakhir?</div>
                     </div>
                     <div class="modal-body py-4">
                         <fieldset class="form-fieldset">
                             <div class="mb-3 row">
                                 <label for="nocust" class="col-sm-4 col-form-label form-label-sm">NIS</label>
                                 <div class="col">
-                                    <input type="text" readonly class="form-control  form-control-sm" id="nocust"
-                                           name="nocust">
+                                    <input type="text" readonly class="form-control form-control-sm" id="nocust" name="nocust">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label for="nmcust" class="col-sm-4 col-form-label form-label-sm">Nama Siswa</label>
                                 <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control form-control-sm" id="nmcust"
-                                           name="nmcust">
+                                    <input type="text" readonly class="form-control form-control-sm" id="nmcust" name="nmcust">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label for="billnm" class="col-sm-4 col-form-label form-label-sm">Nama Tagihan</label>
                                 <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control form-control-sm" id="billnm"
-                                           name="billnm">
+                                    <input type="text" readonly class="form-control form-control-sm" id="billnm" name="billnm">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label for="billam" class="col-sm-4 col-form-label form-label-sm">Nominal</label>
                                 <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control form-control-sm" id="billam"
-                                           name="billam">
+                                    <input type="text" readonly class="form-control form-control-sm" id="billam" name="billam">
                                 </div>
                             </div>
                         </fieldset>
@@ -322,8 +376,7 @@
                         <div class="w-100">
                             <div class="row">
                                 <div class="col">
-                                    <input type="reset" class="btn btn-outline-secondary w-100" value="Batal"
-                                           data-bs-dismiss="modal">
+                                    <input type="reset" class="btn btn-outline-secondary w-100" value="Batal" data-bs-dismiss="modal">
                                 </div>
                                 <div class="col">
                                     <input type="submit" value="Reversal" id="delete-submit-btn" class="btn btn-warning w-100">
@@ -337,8 +390,7 @@
     </form>
 
     <form id="form-hapus" class="mainForm">
-        <div class="modal modal-blur fade" id="modal-hapus" tabindex="-1" role="dialog" aria-hidden="true"
-             data-bs-backdrop="static">
+        <div class="modal modal-blur fade" id="modal-hapus" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-status bg-danger"></div>
@@ -349,38 +401,32 @@
                     <div class="modal-body text-capitalize text-center py-4">
                         <span class="ri-delete-bin-line ri-3x"></span>
                         <h4>Hapus Tagihan Siswa?</h4>
-                        <div class="text-muted small">
-                            Hanya tagihan yang belum pernah dibayar (PAIDST = 0, INSTALLMENT = 0).
-                        </div>
+                        <div class="text-muted small">Hanya tagihan yang belum pernah dibayar (PAIDST = 0, INSTALLMENT = 0).</div>
                     </div>
                     <div class="modal-body py-4">
                         <fieldset class="form-fieldset">
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label form-label-sm">NIS</label>
                                 <div class="col">
-                                    <input type="text" readonly class="form-control form-control-sm" id="hapus_nocust"
-                                           name="nocust">
+                                    <input type="text" readonly class="form-control form-control-sm" id="hapus_nocust" name="nocust">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label form-label-sm">Nama Siswa</label>
                                 <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control form-control-sm" id="hapus_nmcust"
-                                           name="nmcust">
+                                    <input type="text" readonly class="form-control form-control-sm" id="hapus_nmcust" name="nmcust">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label form-label-sm">Nama Tagihan</label>
                                 <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control form-control-sm" id="hapus_billnm"
-                                           name="billnm">
+                                    <input type="text" readonly class="form-control form-control-sm" id="hapus_billnm" name="billnm">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-sm-4 col-form-label form-label-sm">Nominal</label>
                                 <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control form-control-sm" id="hapus_billam"
-                                           name="billam_total">
+                                    <input type="text" readonly class="form-control form-control-sm" id="hapus_billam" name="billam_total">
                                 </div>
                             </div>
                         </fieldset>
@@ -391,8 +437,7 @@
                         <div class="w-100">
                             <div class="row">
                                 <div class="col">
-                                    <input type="reset" class="btn btn-outline-secondary w-100" value="Batal"
-                                           data-bs-dismiss="modal">
+                                    <input type="reset" class="btn btn-outline-secondary w-100" value="Batal" data-bs-dismiss="modal">
                                 </div>
                                 <div class="col">
                                     <input type="submit" value="Hapus" class="btn btn-danger w-100">
@@ -417,122 +462,6 @@
             prefetchedColumns: @json($tableColumns ?? []),
         };
     </script>
-    <script>
-    (function() {
-        function destroyAllDataTables() {
-            if (typeof $ !== 'undefined' && $.fn.dataTable) {
-                $.fn.dataTable.tables({ visible: true, api: true }).each(function() {
-                    try { this.destroy(); } catch(e) {}
-                });
-                if ($.fn.dataTable.isDataTable('#main_table')) {
-                    try { $('#main_table').DataTable().destroy(); } catch(e) {}
-                }
-            }
-            $('.dataTables_wrapper').remove();
-            $('#main_table tbody').empty();
-            $('#main_table thead').empty();
-            $('#main_table').removeClass('dataTable');
-            window.__dataTagihanTableBooted = false;
-        }
-
-        function initTable() {
-            destroyAllDataTables();
-
-            if (typeof window.DATA_TAGIHAN_BOOT === 'undefined' || !window.DATA_TAGIHAN_BOOT.dataUrl) {
-                console.error('DATA_TAGIHAN_BOOT tidak ditemukan');
-                return;
-            }
-
-            if (typeof window.getDT !== 'function') {
-                console.error('getDT tidak ditemukan');
-                return;
-            }
-
-            var cols = [
-                {
-                    data: 'detail_group',
-                    name: '+',
-                    orderable: false,
-                    className: 'text-center',
-                    render: function(d, t, r) {
-                        if (t === 'display') {
-                            return '<button type="button" class="btn btn-sm btn-primary btn-detail-group">+</button>';
-                        }
-                        return d;
-                    }
-                },
-                { data: 'NOCUST', name: 'NIS' },
-                { data: 'NUM2ND', name: 'NO DAFT' },
-                { data: 'NOVA', name: 'NO VA' },
-                { data: 'NMCUST', name: 'NAMA' },
-                { data: 'CODE02', name: 'UNIT' },
-                { data: 'DESC02', name: 'KELAS' },
-                { data: 'DESC03', name: 'KELOMPOK' },
-                { data: 'BILLAC', name: 'PERIODE' },
-                { data: 'JUMLAH_TAGIHAN', name: 'JML ITEM', className: 'text-end' },
-                { data: 'BILLAM_TOTAL', name: 'JUMLAH TAGIHAN', className: 'text-end' },
-                { data: 'BILLPAID', name: 'JUMLAH TERBAYAR', className: 'text-end' },
-                { data: 'SISA', name: 'SISA TAGIHAN', className: 'text-end' }
-            ];
-
-            var opts = {
-                tableId: 'main_table',
-                formId: 'filter-form',
-                columnUrl: null,
-                dataUrl: window.DATA_TAGIHAN_BOOT.dataUrl,
-                prefetchedColumns: cols,
-                dataColumns: cols,
-                destroy: true,
-                retrieve: false,
-                thead: true,
-                tfoot: false,
-                scrollX: true,
-                order: [[8, 'desc']],
-                paging: true,
-                searching: true,
-                pageLength: 10,
-                lengthMenu: [10, 25, 50, 75, 100],
-                select: true,
-                rowId: 'CUSTID',
-                buttons: ['excel', 'pdf', 'print'],
-                excelCurrencyTotal: true,
-                pdfOrientation: 'landscape',
-                pdfPageSize: 'A3',
-                pdfMargins: [10, 14, 10, 14],
-                pdfFontSize: 6,
-                pdfHeaderFontSize: 7,
-                columnDefs: [{ targets: [0], orderable: false }]
-            };
-
-            window.getDT(opts);
-            console.log('✅ DataTagihan Table initialized');
-
-            var filterForm = $('#filter-form');
-            filterForm.off('submit').on('submit', function(e) {
-                e.preventDefault();
-                if (typeof window.dataReFilter === 'function') {
-                    window.dataReFilter('main_table');
-                }
-            });
-            filterForm.off('reset').on('reset', function() {
-                setTimeout(function() {
-                    if (typeof window.dataReFilter === 'function') {
-                        window.dataReFilter('main_table');
-                    }
-                    $('[data-control="select2"]', '#filter-form').trigger('change');
-                }, 0);
-            });
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                setTimeout(initTable, 300);
-            });
-        } else {
-            setTimeout(initTable, 300);
-        }
-    })();
-    </script>
     <script src="{{asset('main/libs/moment/moment.js')}}"></script>
     <script src="{{asset('main/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js')}}"></script>
 
@@ -542,12 +471,8 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js"
-            integrity="sha512-axXaF5grZBaYl7qiM6OMHgsgVXdSLxqq0w7F4CQxuFyrcPmn0JfnqsOtYHUun80g6mRRdvJDrTCyL8LQqBOt/Q=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js"
-            integrity="sha512-EFlschXPq/G5zunGPRSYqazR1CMKj0cQc8v6eMrQwybxgIbhsfoO5NAMQX3xFDQIbFlViv53o7Hy+yCWw6iZxA=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js" integrity="sha512-axXaF5grZBaYl7qiM6OMHgsgVXdSLxqq0w7F4CQxuFyrcPmn0JfnqsOtYHUun80g6mRRdvJDrTCyL8LQqBOt/Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js" integrity="sha512-EFlschXPq/G5zunGPRSYqazR1CMKj0cQc8v6eMrQwybxgIbhsfoO5NAMQX3xFDQIbFlViv53o7Hy+yCWw6iZxA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script type="text/javascript">
         const select2 = $(`[data-control='select2']`);
@@ -585,64 +510,45 @@
         }
 
         function buildTransLogHtml(bill, logs) {
-            const rows = logs.length
-                ? logs.map((log, idx) => {
-                    const debet = Number(log.debet ?? 0);
-                    const kredit = Number(log.kredit ?? 0);
-                    return `
-                    <tr>
-                        <td class="text-center text-muted">${idx + 1}</td>
-                        <td class="text-nowrap">${log.trxdate ?? '-'}</td>
-                        <td>${metodeBadge(log.metode)}</td>
-                        <td class="text-end trx-log-amount--debet">${debet > 0 ? formatRupiah(debet) : '-'}</td>
-                        <td class="text-end trx-log-amount--kredit">${kredit > 0 ? formatRupiah(kredit) : '-'}</td>
-                        <td>${log.fidbank ?? '-'}</td>
-                        <td class="text-nowrap">${log.transno ?? '-'}</td>
-                        <td class="text-nowrap small text-muted">${log.noreff ?? '-'}</td>
-                    </tr>
-                `;
-                }).join('')
-                : '';
+            const rows = logs.length ? logs.map((log, idx) => {
+                const debet = Number(log.debet ?? 0);
+                const kredit = Number(log.kredit ?? 0);
+                return `<tr>
+                    <td class="text-center text-muted">${idx + 1}</td>
+                    <td class="text-nowrap">${log.trxdate ?? '-'}</td>
+                    <td>${metodeBadge(log.metode)}</td>
+                    <td class="text-end trx-log-amount--debet">${debet > 0 ? formatRupiah(debet) : '-'}</td>
+                    <td class="text-end trx-log-amount--kredit">${kredit > 0 ? formatRupiah(kredit) : '-'}</td>
+                    <td>${log.fidbank ?? '-'}</td>
+                    <td class="text-nowrap">${log.transno ?? '-'}</td>
+                    <td class="text-nowrap small text-muted">${log.noreff ?? '-'}</td>
+                </tr>`;
+            }).join('') : '';
 
-            const tableBody = rows || `
-                <tr>
-                    <td colspan="8">
-                        <div class="trx-log-empty">
-                            <i class="ri-file-list-3-line ri-lg d-block mb-1"></i>
-                            Tidak ada log transaksi
-                        </div>
-                    </td>
-                </tr>
-            `;
+            const tableBody = rows || `<tr><td colspan="8"><div class="trx-log-empty"><i class="ri-file-list-3-line ri-lg d-block mb-1"></i>Tidak ada log transaksi</div></td></tr>`;
 
-            return `
-                <div class="trx-log-panel">
-                    <div class="trx-log-panel__header">
-                        <div class="trx-log-panel__title">
-                            <i class="ri-history-line"></i> Riwayat Transaksi
-                        </div>
-                        <span class="trx-log-chip"><strong>Tagihan:</strong> ${bill.BILLNM ?? '-'}</span>
-                        <span class="trx-log-chip"><strong>AA:</strong> ${bill.AA ?? '-'}</span>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-bordered table-hover trx-log-table mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-center" style="width: 48px;">No</th>
-                                    <th>Tanggal</th>
-                                    <th>Metode</th>
-                                    <th class="text-end">Debet</th>
-                                    <th class="text-end">Kredit</th>
-                                    <th>FID Bank</th>
-                                    <th>Trans No</th>
-                                    <th>No Ref</th>
-                                </tr>
-                            </thead>
-                            <tbody>${tableBody}</tbody>
-                        </table>
-                    </div>
+            return `<div class="trx-log-panel">
+                <div class="trx-log-panel__header">
+                    <div class="trx-log-panel__title"><i class="ri-history-line"></i> Riwayat Transaksi</div>
+                    <span class="trx-log-chip"><strong>Tagihan:</strong> ${bill.BILLNM ?? '-'}</span>
+                    <span class="trx-log-chip"><strong>AA:</strong> ${bill.AA ?? '-'}</span>
                 </div>
-            `;
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-hover trx-log-table mb-0">
+                        <thead><tr>
+                            <th class="text-center" style="width: 48px;">No</th>
+                            <th>Tanggal</th>
+                            <th>Metode</th>
+                            <th class="text-end">Debet</th>
+                            <th class="text-end">Kredit</th>
+                            <th>FID Bank</th>
+                            <th>Trans No</th>
+                            <th>No Ref</th>
+                        </tr></thead>
+                        <tbody>${tableBody}</tbody>
+                    </table>
+                </div>
+            </div>`;
         }
 
         async function fetchTransLog(bill) {
@@ -685,9 +591,7 @@
             const logs = await fetchTransLog(bill);
             const colCount = $billRow.children('td').length || 1;
             const detailHtml = buildTransLogHtml(bill, logs);
-            $billRow.after(
-                `<tr class="trx-log-detail-row" id="${detailId}"><td colspan="${colCount}" class="p-0">${detailHtml}</td></tr>`
-            );
+            $billRow.after(`<tr class="trx-log-detail-row" id="${detailId}"><td colspan="${colCount}" class="p-0">${detailHtml}</td></tr>`);
             buttonEl.textContent = '-';
         }
 
@@ -695,87 +599,59 @@
             const paidst = parseInt(bill.PAIDST ?? 0, 10) || 0;
             const sisa = Number(bill.BILLAM ?? 0);
             const lunas = paidst === 1 || sisa <= 0;
-            return lunas
-                ? '<span class="badge badge-lunas">LUNAS</span>'
-                : '<span class="badge badge-belum-lunas">BELUM LUNAS</span>';
+            return lunas ? '<span class="badge badge-lunas">LUNAS</span>' : '<span class="badge badge-belum-lunas">BELUM LUNAS</span>';
         }
 
         function buildBillsTableHtml(groupMeta, bills) {
-            const rows = bills.length
-                ? bills.map((bill) => {
-                    const urut = parseInt(bill.FUrutan ?? 0, 10) || 0;
-                    const billPaid = parseInt(bill.BILLPAID ?? 0, 10) || 0;
-                    const canReversal = billPaid > 0;
-                    const canHapus = !!bill.hapus;
-                    return `
-                    <tr data-aa="${bill.AA}" data-custid="${bill.CUSTID}">
-                        <td>
-                            <button type="button" class="btn btn-sm btn-primary btn-bill-trx">+</button>
-                        </td>
-                        <td>${bill.BILLNM ?? '-'}</td>
-                        <td class="text-end">${formatRupiah(bill.BILLAM_TOTAL)}</td>
-                        <td class="text-end">${formatRupiah(bill.BILLPAID)}</td>
-                        <td class="text-end">${formatRupiah(bill.BILLAM)}</td>
-                        <td>${bill.PAIDDT ?? '-'}</td>
-                        <td class="text-center">${billStatusBadge(bill)}</td>
-                        <td class="text-center">${urut}</td>
-                        <td class="text-center text-nowrap">
-                            <button type="button" class="btn btn-sm btn-outline-primary btn-bill-naik" ${urut > 0 ? '' : 'disabled'}>
-                                <span class="ri-arrow-up-line"></span>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-primary btn-bill-turun" ${urut > 0 ? '' : 'disabled'}>
-                                <span class="ri-arrow-down-line"></span>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-warning btn-bill-reversal" data-billnm="${bill.BILLNM ?? ''}" data-billam="${bill.BILLAM_TOTAL ?? 0}" ${canReversal ? '' : 'disabled'}>
-                                <span class="ri-arrow-go-back-line"></span>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-danger btn-bill-hapus" data-billnm="${bill.BILLNM ?? ''}" data-billam="${bill.BILLAM_TOTAL ?? 0}" ${canHapus ? '' : 'disabled'}>
-                                <span class="ri-delete-bin-line"></span>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                }).join('')
-                : '';
-
-            const tableBody = rows || `
-                <tr>
-                    <td colspan="9">
-                        <div class="bills-empty">Tidak ada tagihan pada periode ini</div>
+            const rows = bills.length ? bills.map((bill) => {
+                const urut = parseInt(bill.FUrutan ?? 0, 10) || 0;
+                const billPaid = parseInt(bill.BILLPAID ?? 0, 10) || 0;
+                const canReversal = billPaid > 0;
+                const canHapus = !!bill.hapus;
+                return `<tr data-aa="${bill.AA}" data-custid="${bill.CUSTID}">
+                    <td><button type="button" class="btn btn-sm btn-primary btn-bill-trx">+</button></td>
+                    <td>${bill.BILLNM ?? '-'}</td>
+                    <td class="text-end">${formatRupiah(bill.BILLAM_TOTAL)}</td>
+                    <td class="text-end">${formatRupiah(bill.BILLPAID)}</td>
+                    <td class="text-end">${formatRupiah(bill.BILLAM)}</td>
+                    <td>${bill.PAIDDT ?? '-'}</td>
+                    <td class="text-center">${billStatusBadge(bill)}</td>
+                    <td class="text-center">${urut}</td>
+                    <td class="text-center text-nowrap">
+                        <button type="button" class="btn btn-sm btn-outline-primary btn-bill-naik" ${urut > 0 ? '' : 'disabled'}><span class="ri-arrow-up-line"></span></button>
+                        <button type="button" class="btn btn-sm btn-outline-primary btn-bill-turun" ${urut > 0 ? '' : 'disabled'}><span class="ri-arrow-down-line"></span></button>
+                        <button type="button" class="btn btn-sm btn-warning btn-bill-reversal" data-billnm="${bill.BILLNM ?? ''}" data-billam="${bill.BILLAM_TOTAL ?? 0}" ${canReversal ? '' : 'disabled'}><span class="ri-arrow-go-back-line"></span></button>
+                        <button type="button" class="btn btn-sm btn-danger btn-bill-hapus" data-billnm="${bill.BILLNM ?? ''}" data-billam="${bill.BILLAM_TOTAL ?? 0}" ${canHapus ? '' : 'disabled'}><span class="ri-delete-bin-line"></span></button>
                     </td>
-                </tr>
-            `;
+                </tr>`;
+            }).join('') : '';
 
-            return `
-                <div class="bills-panel">
-                    <div class="bills-panel__header">
-                        <div class="bills-panel__title">
-                            <i class="ri-file-list-3-line"></i> Daftar Tagihan
-                        </div>
-                        <span class="trx-log-chip"><strong>NIS:</strong> ${groupMeta.NOCUST ?? '-'}</span>
-                        <span class="trx-log-chip"><strong>Nama:</strong> ${groupMeta.NMCUST ?? '-'}</span>
-                        <span class="trx-log-chip"><strong>Periode:</strong> ${groupMeta.BILLAC ?? '-'}</span>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-bordered table-hover bills-table mb-0">
-                            <thead>
-                                <tr>
-                                    <th style="width: 48px;"></th>
-                                    <th>Nama Tagihan</th>
-                                    <th class="text-end">Jumlah Tagihan</th>
-                                    <th class="text-end">Terbayar</th>
-                                    <th class="text-end">Sisa</th>
-                                    <th>Tanggal Bayar</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Urutan</th>
-                                    <th class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>${tableBody}</tbody>
-                        </table>
-                    </div>
+            const tableBody = rows || `<tr><td colspan="9"><div class="bills-empty">Tidak ada tagihan pada periode ini</div></td></tr>`;
+
+            return `<div class="bills-panel">
+                <div class="bills-panel__header">
+                    <div class="bills-panel__title"><i class="ri-file-list-3-line"></i> Daftar Tagihan</div>
+                    <span class="trx-log-chip"><strong>NIS:</strong> ${groupMeta.NOCUST ?? '-'}</span>
+                    <span class="trx-log-chip"><strong>Nama:</strong> ${groupMeta.NMCUST ?? '-'}</span>
+                    <span class="trx-log-chip"><strong>Periode:</strong> ${groupMeta.BILLAC ?? '-'}</span>
                 </div>
-            `;
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-hover bills-table mb-0">
+                        <thead><tr>
+                            <th style="width: 48px;"></th>
+                            <th>Nama Tagihan</th>
+                            <th class="text-end">Jumlah Tagihan</th>
+                            <th class="text-end">Terbayar</th>
+                            <th class="text-end">Sisa</th>
+                            <th>Tanggal Bayar</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Urutan</th>
+                            <th class="text-center">Aksi</th>
+                        </tr></thead>
+                        <tbody>${tableBody}</tbody>
+                    </table>
+                </div>
+            </div>`;
         }
 
         async function fetchBillsForGroup(custid, billac) {
@@ -828,9 +704,7 @@
             const bills = await fetchBillsForGroup(custid, billac);
             const colCount = $rowEl.children('td').length || 1;
             const detailHtml = buildBillsTableHtml(rowData, bills);
-            $rowEl.after(
-                `<tr class="bills-detail-row" id="${detailId}"><td colspan="${colCount}" class="p-0">${detailHtml}</td></tr>`
-            );
+            $rowEl.after(`<tr class="bills-detail-row" id="${detailId}"><td colspan="${colCount}" class="p-0">${detailHtml}</td></tr>`);
             buttonEl.textContent = '-';
         }
 
@@ -864,28 +738,28 @@
                 },
                 body: form
             }))
-                .then(async response => {
-                    const data = await response.json().catch(() => ({}));
-                    if (!response.ok) {
-                        throw {status: response.status, message: data.message || response.statusText};
-                    }
-                    return data;
-                })
-                .then(async data => {
-                    successAlert(data.message || 'Urutan tagihan berhasil diubah.');
-                    const $tr = $btn.closest('tr[data-aa]');
-                    const $detailRow = $btn.closest('tr.bills-detail-row');
-                    const $groupRow = $detailRow.prev('tr');
-                    if ($groupRow.length) {
-                        const dtRow = window.DT['main_table'].row($groupRow);
-                        const rowData = dtRow.data();
-                        const bills = await fetchBillsForGroup(rowData.CUSTID, rowData.BILLAC);
-                        $detailRow.find('td').first().html(buildBillsTableHtml(rowData, bills));
-                    }
-                })
-                .catch(error => {
-                    errorAlert(error.message || 'Gagal mengubah urutan tagihan.');
-                });
+            .then(async response => {
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw {status: response.status, message: data.message || response.statusText};
+                }
+                return data;
+            })
+            .then(async data => {
+                successAlert(data.message || 'Urutan tagihan berhasil diubah.');
+                const $tr = $btn.closest('tr[data-aa]');
+                const $detailRow = $btn.closest('tr.bills-detail-row');
+                const $groupRow = $detailRow.prev('tr');
+                if ($groupRow.length) {
+                    const dtRow = window.DT['main_table'].row($groupRow);
+                    const rowData = dtRow.data();
+                    const bills = await fetchBillsForGroup(rowData.CUSTID, rowData.BILLAC);
+                    $detailRow.find('td').first().html(buildBillsTableHtml(rowData, bills));
+                }
+            })
+            .catch(error => {
+                errorAlert(error.message || 'Gagal mengubah urutan tagihan.');
+            });
         }
 
         $(document).on('click', '.btn-bill-naik, .btn-bill-turun', function () {
@@ -948,17 +822,14 @@
                     user_id = document.getElementById('user_delete_id').value;
                     url = '{{route('admin.keuangan.tagihan-siswa.data-tagihan.destroy',':id')}}'
                     url = url.replace(':id', item_id)
-
-                    request = new Request(
-                        url, {
-                            method: "DELETE",
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken,
-                            }, body: JSON.stringify({
-                                user_id: user_id
-                            })
-                        });
+                    request = new Request(url, {
+                        method: "DELETE",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: JSON.stringify({user_id: user_id})
+                    });
                     break;
                 case 'hapus':
                     loadingAlert('Menghapus tagihan....');
@@ -966,16 +837,13 @@
                     user_id = document.getElementById('user_hapus_id').value;
                     url = '{{route('admin.keuangan.tagihan-siswa.data-tagihan.hapus',':id')}}';
                     url = url.replace(':id', item_id);
-
                     request = new Request(url, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': csrfToken,
                         },
-                        body: JSON.stringify({
-                            user_id: user_id,
-                        }),
+                        body: JSON.stringify({user_id: user_id}),
                     });
                     break;
                 default:
@@ -984,38 +852,38 @@
             }
 
             fetch(request)
-                .then(async response => {
-                    const data = await response.json().catch(() => ({}));
-                    if (!response.ok) {
-                        throw {status: response.status, message: data.message || response.statusText};
-                    }
-                    return data;
-                })
-                .then(data => {
-                    if (typeof window.dataReload === 'function') {
-                        window.dataReload('main_table');
-                    } else if (window.DT && window.DT.main_table) {
-                        window.DT.main_table.ajax.reload();
-                    }
-                    successAlert(data.message);
-                    modalDelete.hide();
-                    modalHapus.hide();
-                })
-                .catch(error => {
-                    if (error.status === 422) {
-                        errorAlert(error.message);
-                    } else {
-                        const errorMessages = {
-                            401: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan!',
-                            403: 'Anda tidak memiliki izin untuk mengakses halaman ini 😖',
-                            404: 'Halaman yang dituju tidak ditemukan 🧐',
-                            405: 'Metode tidak valid 🧐 <br>silahkan muat ulang halaman dan coba lagi!',
-                            419: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan!',
-                            429: 'Terlalu banyak permintaan akses <br>silahkan tunggu beberapa saat 🙏',
-                        };
-                        errorAlert(errorMessages[error.status] || "Terjadi kesalahan, silahkan coba memuat ulang halaman");
-                    }
-                });
+            .then(async response => {
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw {status: response.status, message: data.message || response.statusText};
+                }
+                return data;
+            })
+            .then(data => {
+                if (typeof window.dataReload === 'function') {
+                    window.dataReload('main_table');
+                } else if (window.DT && window.DT.main_table) {
+                    window.DT.main_table.ajax.reload();
+                }
+                successAlert(data.message);
+                modalDelete.hide();
+                modalHapus.hide();
+            })
+            .catch(error => {
+                if (error.status === 422) {
+                    errorAlert(error.message);
+                } else {
+                    const errorMessages = {
+                        401: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan!',
+                        403: 'Anda tidak memiliki izin untuk mengakses halaman ini 😖',
+                        404: 'Halaman yang dituju tidak ditemukan 🧐',
+                        405: 'Metode tidak valid 🧐 <br>silahkan muat ulang halaman dan coba lagi!',
+                        419: 'Sesi anda sudah habis 🙏 <br>Silahkan muat ulang halaman untuk melanjutkan!',
+                        429: 'Terlalu banyak permintaan akses <br>silahkan tunggu beberapa saat 🙏',
+                    };
+                    errorAlert(errorMessages[error.status] || "Terjadi kesalahan, silahkan coba memuat ulang halaman");
+                }
+            });
         }
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -1079,7 +947,8 @@
                     bold: 'https://cdn.jsdelivr.net/npm/@canvas-fonts/times-new-roman-bold@1.0.4/Times New Roman Bold.ttf',
                     italics: 'https://cdn.jsdelivr.net/npm/@canvas-fonts/times-new-roman-italic@1.0.4/Times New Roman Italic.ttf',
                     bolditalics: 'https://cdn.jsdelivr.net/npm/@canvas-fonts/times-new-roman-bold@1.0.4/Times New Roman Bold.ttf'
-                }, Roboto: {
+                },
+                Roboto: {
                     normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
                     bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
                     italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
@@ -1105,14 +974,12 @@
             const domisili = "{{ config('app.domisili') }}";
             const tanggalSekarang = "{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM YYYY') }}";
             const APP_VA_PREFIX = @json((string) (config('app.nova') ?: '797783'));
-            const showVA = (nis) => typeof formatNoVA === 'function'
-                ? formatNoVA(nis, APP_VA_PREFIX)
-                : (() => {
-                    const digits = String(nis ?? '').replace(/\D/g, '');
-                    if (!digits) return '';
-                    const padLen = 16 - APP_VA_PREFIX.length;
-                    return APP_VA_PREFIX + digits.padStart(padLen, '0');
-                })();
+            const showVA = (nis) => typeof formatNoVA === 'function' ? formatNoVA(nis, APP_VA_PREFIX) : (() => {
+                const digits = String(nis ?? '').replace(/\D/g, '');
+                if (!digits) return '';
+                const padLen = 16 - APP_VA_PREFIX.length;
+                return APP_VA_PREFIX + digits.padStart(padLen, '0');
+            })();
 
             async function generatePdf(title, bodyContent, unit_logo = false) {
                 try {
@@ -1131,28 +998,15 @@
                         table: {
                             widths: [60, '*'],
                             body: [[
-                                logo ? {
-                                    image: logo,
-                                    width: 60,
-                                    alignment: 'center'
-                                } : '',
+                                logo ? { image: logo, width: 60, alignment: 'center' } : '',
                                 {
                                     stack: [
-                                        instansi.nama_sub_1 ? {
-                                            text: instansi.nama_sub_1.toUpperCase(),
-                                            style: 'headerSmall'
-                                        } : '',
-                                        instansi.nama_sub_2 ? {
-                                            text: instansi.nama_sub_2.toUpperCase(),
-                                            style: 'headerSmall'
-                                        } : '',
-                                        {text: instansi.nama_instansi.toUpperCase(), style: 'headerBig'},
-                                        instansi.akreditasi ? {text: instansi.akreditasi, style: 'headerSmall'} : '',
-                                        instansi.alamat ? {text: instansi.alamat, style: 'headerSmall'} : '',
-                                        {
-                                            text: `Telp: ${instansi.kontak.telepon || '-'} | Email: ${instansi.kontak.email || '-'} | Web: ${instansi.kontak.website || '-'}`,
-                                            style: 'headerSmall'
-                                        }
+                                        instansi.nama_sub_1 ? { text: instansi.nama_sub_1.toUpperCase(), style: 'headerSmall' } : '',
+                                        instansi.nama_sub_2 ? { text: instansi.nama_sub_2.toUpperCase(), style: 'headerSmall' } : '',
+                                        { text: instansi.nama_instansi.toUpperCase(), style: 'headerBig' },
+                                        instansi.akreditasi ? { text: instansi.akreditasi, style: 'headerSmall' } : '',
+                                        instansi.alamat ? { text: instansi.alamat, style: 'headerSmall' } : '',
+                                        { text: `Telp: ${instansi.kontak.telepon || '-'} | Email: ${instansi.kontak.email || '-'} | Web: ${instansi.kontak.website || '-'}`, style: 'headerSmall' }
                                     ],
                                     alignment: 'center'
                                 }
@@ -1163,20 +1017,12 @@
 
                     const footer = {
                         columns: [
-                            {text: '', width: '*'},
+                            { text: '', width: '*' },
                             {
                                 stack: [
-                                    {
-                                        text: `${domisili}, ${tanggalSekarang}`,
-                                        margin: [0, 10, 0, 0],
-                                        alignment: 'center'
-                                    },
-                                    tandaTangan ? {
-                                        image: tandaTangan,
-                                        width: 100,
-                                        alignment: 'center'
-                                    } : {},
-                                    {text: userName, alignment: 'center'}
+                                    { text: `${domisili}, ${tanggalSekarang}`, margin: [0, 10, 0, 0], alignment: 'center' },
+                                    tandaTangan ? { image: tandaTangan, width: 100, alignment: 'center' } : {},
+                                    { text: userName, alignment: 'center' }
                                 ],
                                 width: 'auto'
                             }
@@ -1188,19 +1034,11 @@
                         {
                             margin: [0, 5, 0, 5],
                             canvas: [
-                                {type: 'line', x1: 0, y1: 0, x2: availableWidth, y2: 0, lineWidth: 2},
-                                {
-                                    type: 'line',
-                                    x1: 0,
-                                    y1: 3,
-                                    x2: availableWidth,
-                                    y2: 3,
-                                    lineWidth: 0.5,
-                                    lineColor: '#888'
-                                }
+                                { type: 'line', x1: 0, y1: 0, x2: availableWidth, y2: 0, lineWidth: 2 },
+                                { type: 'line', x1: 0, y1: 3, x2: availableWidth, y2: 3, lineWidth: 0.5, lineColor: '#888' }
                             ]
                         },
-                        {text: title.toUpperCase(), style: 'title', margin: [0, 5, 0, 5]},
+                        { text: title.toUpperCase(), style: 'title', margin: [0, 5, 0, 5] },
                         ...bodyContent,
                         footer
                     ];
@@ -1215,21 +1053,20 @@
                         pageMargins: pageMargins,
                         content: content,
                         styles: {
-                            headerBig: {fontSize: 16, bold: true, alignment: 'center'},
-                            headerSmall: {fontSize: 12, alignment: 'center'},
-                            title: {fontSize: 14, bold: true, alignment: 'center'},
-                            subTitle: {fontSize: 12, bold: true},
-                            tableHeader: {bold: true, fillColor: '#ededed', alignment: 'center'},
-                            small: {fontSize: 9, alignment: 'center'},
-                            tableFont: {fontSize: 5}
+                            headerBig: { fontSize: 16, bold: true, alignment: 'center' },
+                            headerSmall: { fontSize: 12, alignment: 'center' },
+                            title: { fontSize: 14, bold: true, alignment: 'center' },
+                            subTitle: { fontSize: 12, bold: true },
+                            tableHeader: { bold: true, fillColor: '#ededed', alignment: 'center' },
+                            small: { fontSize: 9, alignment: 'center' },
+                            tableFont: { fontSize: 5 }
                         },
-                        defaultStyle: {font: 'Times'}
+                        defaultStyle: { font: 'Times' }
                     };
 
                     pdfMake.createPdf(docDefinition).open();
 
-                    successAlert('File telah didownload <br>' +
-                        '<p><span class="badge badge-dot bg-danger me-1"></span> Cek pada menu unduhan browser anda untuk memeriksa!</p>');
+                    successAlert('File telah didownload <br><p><span class="badge badge-dot bg-danger me-1"></span> Cek pada menu unduhan browser anda untuk memeriksa!</p>');
                 } catch (e) {
                     console.error('Error generating PDF:', e);
                     errorAlert(e.message);
@@ -1249,14 +1086,13 @@
                 params.append('custid', data[0].CUSTID)
                 const unit = data[0].CODE02;
                 const fullUrl = `${url}?${params.toString()}`;
-                const request = new Request(
-                    fullUrl, {
-                        method: "GET",
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Accept': 'application/json'
-                        }
-                    });
+                const request = new Request(fullUrl, {
+                    method: "GET",
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    }
+                });
 
                 try {
                     const response = await fetch(request);
@@ -1292,34 +1128,23 @@
             async function getLogoUnit(unit = false) {
                 const fallbackLogo = 'data:image/jpeg;base64,' + "{{ base64_encode(file_get_contents(public_path(config('app.logo')))) }}";
                 try {
-                    if (!unit) {
-                        throw 'error';
-                    }
+                    if (!unit) { throw 'error'; }
                     const cacheKey = `logo_unit_${unit}`;
                     const cachedLogo = localStorage.getItem(cacheKey);
-                    if (cachedLogo) {
-                        return cachedLogo;
-                    }
+                    if (cachedLogo) { return cachedLogo; }
                     const params = new URLSearchParams();
                     params.append('unit', unit);
-                    const request = new Request(
-                        `{{ route('admin.master-data.get-logo') }}?${params.toString()}`,
-                        {
-                            method: "GET",
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken,
-                                'Accept': 'application/json'
-                            }
+                    const request = new Request(`{{ route('admin.master-data.get-logo') }}?${params.toString()}`, {
+                        method: "GET",
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
                         }
-                    );
+                    });
                     const response = await fetch(request);
-                    if (!response.ok) {
-                        throw 'error';
-                    }
+                    if (!response.ok) { throw 'error'; }
                     const result = await response.json();
-                    if (!result.data) {
-                        throw 'error';
-                    }
+                    if (!result.data) { throw 'error'; }
                     localStorage.setItem(cacheKey, result.data);
                     return result.data;
                 } catch {
@@ -1356,22 +1181,10 @@
                     let nocust = siswa.NOCUST === null || siswa.NOCUST === '' || siswa.NOCUST === '-' || !siswa.NOCUST ? false : siswa.NOCUST;
 
                     const mainTable = [
-                        [(nocust ? 'NIS ' : 'No. Pendaftaran'), ': ' + (nocust ? nocust : siswa.NUM2ND), 'Unit', ': ' + siswa.CODE02].map(h => ({
-                            text: h,
-                            border: [false, false, false, false]
-                        })),
-                        [(nocust ? 'No. VA ' : '-'), ': ' + (nocust ? showVA(nocust) : ''), 'Kelas', ': ' + siswa.DESC02 + ' '+ siswa.DESC03].map(h => ({
-                            text: h,
-                            border: [false, false, false, false]
-                        })),
-                        ['Nama ', ': ' + siswa.NMCUST,'Ayah', ': ' + (siswa.GENUS ?? '-')].map(h => ({
-                            text: h,
-                            border: [false, false, false, false]
-                        })),
-                        ['', ' ',  'Ibu', ': ' + (siswa.GENUS1 ?? '')].map(h => ({
-                            text: h,
-                            border: [false, false, false, false]
-                        })),
+                        [(nocust ? 'NIS ' : 'No. Pendaftaran'), ': ' + (nocust ? nocust : siswa.NUM2ND), 'Unit', ': ' + siswa.CODE02].map(h => ({ text: h, border: [false, false, false, false] })),
+                        [(nocust ? 'No. VA ' : '-'), ': ' + (nocust ? showVA(nocust) : ''), 'Kelas', ': ' + siswa.DESC02 + ' '+ siswa.DESC03].map(h => ({ text: h, border: [false, false, false, false] })),
+                        ['Nama ', ': ' + siswa.NMCUST,'Ayah', ': ' + (siswa.GENUS ?? '-')].map(h => ({ text: h, border: [false, false, false, false] })),
+                        ['', ' ', 'Ibu', ': ' + (siswa.GENUS1 ?? '')].map(h => ({ text: h, border: [false, false, false, false] })),
                     ]
 
                     bodyContent.push({
@@ -1389,8 +1202,7 @@
                     });
 
                     const tableBody = [
-                        ['#', 'Tanggal Bayar', 'Periode', 'Nama Tagihan', 'Total Tagihan', 'Total Bayar', 'Sisa', 'Status']
-                            .map(h => ({text: h, style: 'tableHeader'}))
+                        ['#', 'Tanggal Bayar', 'Periode', 'Nama Tagihan', 'Total Tagihan', 'Total Bayar', 'Sisa', 'Status'].map(h => ({ text: h, style: 'tableHeader' }))
                     ];
 
                     let totalTagihan = 0;
@@ -1410,18 +1222,14 @@
                         const sisaTagihan = Number(item.PAYMENTLEFT ?? item.BILLAM ?? 0);
 
                         tableBody.push([
-                            {text: String(index + 1), alignment: 'center', border: [true, true, true, true]},
-                            {text: tanggalBayar, border: [true, true, true, true]},
-                            {text: item.BILLAC || '-', border: [true, true, true, true]},
-                            {text: item.BILLNM || '-', border: [true, true, true, true]},
-                            {text: formatRupiah(jumlahTagihan), alignment: 'right', border: [true, true, true, true]},
-                            {text: formatRupiah(jumlahBayar), alignment: 'right', border: [true, true, true, true]},
-                            {text: formatRupiah(sisaTagihan), alignment: 'right', border: [true, true, true, true]},
-                            {
-                                text: Number(item.PAIDST) === 1 || sisaTagihan <= 0 ? 'LUNAS' : 'BELUM LUNAS',
-                                alignment: 'center',
-                                border: [true, true, true, true]
-                            }
+                            { text: String(index + 1), alignment: 'center', border: [true, true, true, true] },
+                            { text: tanggalBayar, border: [true, true, true, true] },
+                            { text: item.BILLAC || '-', border: [true, true, true, true] },
+                            { text: item.BILLNM || '-', border: [true, true, true, true] },
+                            { text: formatRupiah(jumlahTagihan), alignment: 'right', border: [true, true, true, true] },
+                            { text: formatRupiah(jumlahBayar), alignment: 'right', border: [true, true, true, true] },
+                            { text: formatRupiah(sisaTagihan), alignment: 'right', border: [true, true, true, true] },
+                            { text: Number(item.PAIDST) === 1 || sisaTagihan <= 0 ? 'LUNAS' : 'BELUM LUNAS', alignment: 'center', border: [true, true, true, true] }
                         ]);
 
                         totalTagihan += jumlahTagihan;
@@ -1430,32 +1238,12 @@
                     });
 
                     tableBody.push([
-                        {text: 'Total', colSpan: 4, style: 'tableHeader', border: [true, true, true, true]},
-                        '',
-                        '',
-                        '',
-                        {
-                            text: formatRupiah(totalTagihan),
-                            style: 'tableHeader',
-                            alignment: 'right',
-                            border: [true, true, true, true]
-                        },
-                        {
-                            text: formatRupiah(totalBayar),
-                            style: 'tableHeader',
-                            alignment: 'right',
-                            border: [true, true, true, true]
-                        },
-                        {
-                            text: formatRupiah(totalSisa),
-                            style: 'tableHeader',
-                            alignment: 'right',
-                            border: [true, true, true, true]
-                        },
-                        {
-                            text: '',
-                            border: [true, true, true, true]
-                        }
+                        { text: 'Total', colSpan: 4, style: 'tableHeader', border: [true, true, true, true] },
+                        '', '', '',
+                        { text: formatRupiah(totalTagihan), style: 'tableHeader', alignment: 'right', border: [true, true, true, true] },
+                        { text: formatRupiah(totalBayar), style: 'tableHeader', alignment: 'right', border: [true, true, true, true] },
+                        { text: formatRupiah(totalSisa), style: 'tableHeader', alignment: 'right', border: [true, true, true, true] },
+                        { text: '', border: [true, true, true, true] }
                     ])
 
                     bodyContent.push({
@@ -1501,8 +1289,7 @@
                         const text = await response.text();
                         message = text || message;
                     }
-                } catch {
-                }
+                } catch {}
 
                 return createError(message, status, extra);
             }
@@ -1513,12 +1300,7 @@
             }
 
             function getContentWidth(pageSize = 'A4', orientation = 'portrait', margins = [30, 30, 30, 30]) {
-                const sizes = {
-                    A4: [595.28, 841.89],
-                    A3: [841.89, 1190.55],
-                    LETTER: [612, 792],
-                    LEGAL: [612, 1008]
-                };
+                const sizes = { A4: [595.28, 841.89], A3: [841.89, 1190.55], LETTER: [612, 792], LEGAL: [612, 1008] };
                 const key = String(pageSize).toUpperCase();
                 const size = sizes[key] || sizes.A4;
 
