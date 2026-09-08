@@ -2,6 +2,15 @@
     'use strict';
 
     function bootDataTagihanTable() {
+        // 🔥 HANCURKAN TABEL LAMA JIKA ADA
+        if ($.fn.dataTable.isDataTable('#main_table')) {
+            console.log('DataTagihan: Hancurkan tabel lama');
+            $('#main_table').DataTable().destroy();
+            $('#main_table tbody').empty();
+            $('#main_table thead').empty();
+            window.__dataTagihanTableBooted = false;
+        }
+
         if (window.__dataTagihanTableBooted) {
             return;
         }
@@ -20,13 +29,6 @@
                 window.errorAlert('Script tabel gagal dimuat. Tekan Ctrl+F5 untuk muat ulang halaman.');
             }
             return;
-        }
-
-        if ($.fn.dataTable.isDataTable('#main_table')) {
-            console.log('DataTagihan: Tabel sudah ada, hancurkan dulu');
-            $('#main_table').DataTable().destroy();
-            $('#main_table tbody').empty();
-            $('#main_table thead').empty();
         }
 
         window.__dataTagihanTableBooted = true;
