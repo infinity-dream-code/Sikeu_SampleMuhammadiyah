@@ -22,6 +22,13 @@
             return;
         }
 
+        // 🔥 CEK APAKAH TABEL SUDAH ADA
+        if ($.fn.dataTable.isDataTable('#main_table')) {
+            console.log('DataTagihan: Tabel sudah ada, hancurkan dulu');
+            $('#main_table').DataTable().destroy();
+            $('#main_table tbody').empty();
+        }
+
         window.__dataTagihanTableBooted = true;
 
         var dataColumns = [
@@ -59,7 +66,7 @@
             prefetchedColumns: dataColumns,
             dataColumns: dataColumns,
             destroy: true,
-            retrieve: true,
+            retrieve: false,
             thead: true,
             tfoot: false,
             scrollX: true,
@@ -90,13 +97,13 @@
         });
 
         var filterForm = $('#filter-form');
-        filterForm.on('submit', function (e) {
+        filterForm.off('submit').on('submit', function (e) {
             e.preventDefault();
             if (typeof window.dataReFilter === 'function') {
                 window.dataReFilter('main_table');
             }
         });
-        filterForm.on('reset', function () {
+        filterForm.off('reset').on('reset', function () {
             setTimeout(function () {
                 if (typeof window.dataReFilter === 'function') {
                     window.dataReFilter('main_table');
