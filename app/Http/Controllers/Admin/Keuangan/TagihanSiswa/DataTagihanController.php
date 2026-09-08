@@ -548,6 +548,8 @@ class DataTagihanController extends Controller
 
     private function buildGetDataResponse(Request $request)
     {
+        \Log::info('=== START getData ===');
+
         $draw = $request->get('draw');
         $start = $request->get("start");
         $rowperpage = $request->get("length");
@@ -557,6 +559,9 @@ class DataTagihanController extends Controller
         $order_arr = $request->get('order', []);
         $search_arr = $request->get('search', []);
         $searchValue = $search_arr['value'] ?? '';
+
+        \Log::info('Search Value:', ['search' => $searchValue]);
+        \Log::info('Filter Input:', ['filter' => $request->input('filter', [])]);
 
         $columnName = 'scctbill.BILLAC';
         $columnSortOrder = 'desc';
@@ -636,7 +641,12 @@ class DataTagihanController extends Controller
             ->selectRaw('SUM(CAST(COALESCE(scctbill.BILLPAID, 0) AS DECIMAL(18,2))) as BILLPAID')
             ->selectRaw('SUM(CAST(COALESCE(scctbill.PAYMENTLEFT, scctbill.BILLAM - COALESCE(scctbill.BILLPAID, 0), 0) AS DECIMAL(18,2))) as SISA');
 
+        \Log::info('Before applyBelumLunasScope');
+
         $this->applyBelumLunasScope($query);
+
+        \Log::info('After applyBelumLunasScope');
+
         $query
             ->whereRaw('CAST(COALESCE(scctcust.STCUST, 0) AS SIGNED) = 1')
             ->when(!blank($searchValue), function ($query) use ($whereAny, $searchValue) {
@@ -652,9 +662,21 @@ class DataTagihanController extends Controller
             })
             ->groupBy($groupBy);
 
+        \Log::info('Before applyUnitScope, sekolah: ' . ($this->sekolah ?? 'null'));
+
         $this->applyUnitScope($query);
 
+        \Log::info('After applyUnitScope');
+
+        // 🔍 LOG QUERY SQL
+        \Log::info('SQL QUERY:', [
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings()
+        ]);
+
         $totalRecords = $this->total();
+
+        \Log::info('Total Records: ' . $totalRecords);
 
         $cacheFilter = array_merge($filter, ['_scope' => $this->cacheScopeSuffix()]);
 
@@ -663,6 +685,8 @@ class DataTagihanController extends Controller
             now()->addMinutes(10),
             fn() => (clone $query)->count()
         );
+
+        \Log::info('Total Records with Filter: ' . $totalRecordswithFilter);
 
         $cacheKey = CacheHandler::cacheKey($this->cacheKey, 'sum_tagihan', $cacheFilter, $searchValue);
 
@@ -691,6 +715,8 @@ class DataTagihanController extends Controller
             ->take($rowperpage)
             ->get();
 
+        \Log::info('Rows count: ' . $rows->count());
+
         $records = $rows
             ->map(function ($item) {
                 $row = $item->toArray();
@@ -716,6 +742,8 @@ class DataTagihanController extends Controller
             ->values()
             ->all();
 
+        \Log::info('Final records count: ' . count($records));
+
         $response = array(
             "draw" => intval($draw),
             "recordsTotal" => $totalRecords ?? 0,
@@ -725,6 +753,10 @@ class DataTagihanController extends Controller
                 'tagihan' => ['location' => 13, 'value' => $totalTagihan, 'columnType' => 'currency'],
             ]
         );
+
+        \Log::info('Response: ', ['response' => $response]);
+        \Log::info('=== END getData ===');
+
         return response()->json($response);
     }
 
