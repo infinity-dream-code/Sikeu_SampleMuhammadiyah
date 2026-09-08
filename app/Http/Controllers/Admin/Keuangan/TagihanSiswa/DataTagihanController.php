@@ -536,12 +536,16 @@ class DataTagihanController extends Controller
         try {
             return $this->buildGetDataResponse($request);
         } catch (\Throwable $e) {
+            // 🔍 TAMBAHKAN INI
+            \Log::error('DataTagihan Error: ' . $e->getMessage());
+            \Log::error('DataTagihan Error Trace: ' . $e->getTraceAsString());
+
             return response()->json([
                 'draw' => intval($request->get('draw')),
                 'recordsTotal' => 0,
                 'recordsFiltered' => 0,
                 'data' => [],
-                'error' => 'Gagal memuat data tagihan',
+                'error' => 'Gagal memuat data tagihan: ' . $e->getMessage(), // ← Tampilkan pesan error
             ], 500);
         }
     }
