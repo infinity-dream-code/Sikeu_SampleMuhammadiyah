@@ -551,6 +551,8 @@ class DataTagihanController extends Controller
 
     private function buildGetDataResponse(Request $request)
     {
+        \Log::info('=== START buildGetDataResponse ===');
+
         $draw = $request->get('draw');
         $start = $request->get("start");
         $rowperpage = $request->get("length");
@@ -560,6 +562,9 @@ class DataTagihanController extends Controller
         $order_arr = $request->get('order', []);
         $search_arr = $request->get('search', []);
         $searchValue = $search_arr['value'] ?? '';
+
+        \Log::info('Search Value:', ['search' => $searchValue]);
+        \Log::info('Filter Input:', ['filter' => $request->input('filter', [])]);
 
         $columnName = 'scctbill.BILLAC';
         $columnSortOrder = 'desc';
@@ -639,7 +644,12 @@ class DataTagihanController extends Controller
             ->selectRaw('SUM(CAST(COALESCE(scctbill.BILLPAID, 0) AS DECIMAL(18,2))) as BILLPAID')
             ->selectRaw('SUM(CAST(COALESCE(scctbill.PAYMENTLEFT, scctbill.BILLAM - COALESCE(scctbill.BILLPAID, 0), 0) AS DECIMAL(18,2))) as SISA');
 
+        \Log::info('Before applyBelumLunasScope');
+
         $this->applyBelumLunasScope($query);
+
+        \Log::info('After applyBelumLunasScope');
+
         $query
             ->whereRaw('CAST(COALESCE(scctcust.STCUST, 0) AS SIGNED) = 1')
             ->when(!blank($searchValue), function ($query) use ($whereAny, $searchValue) {
@@ -655,9 +665,20 @@ class DataTagihanController extends Controller
             })
             ->groupBy($groupBy);
 
+        \Log::info('Before applyUnitScope, sekolah: ' . ($this->sekolah ?? 'null'));
+
         $this->applyUnitScope($query);
 
+        \Log::info('After applyUnitScope');
+
+        \Log::info('SQL QUERY:', [
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings()
+        ]);
+
         $totalRecords = $this->total();
+
+        \Log::info('Total Records: ' . $totalRecords);
 
         $cacheFilter = array_merge($filter, ['_scope' => $this->cacheScopeSuffix()]);
 
@@ -667,8 +688,12 @@ class DataTagihanController extends Controller
             fn() => (clone $query)->count()
         );
 
+        \Log::info('Total Records with Filter: ' . $totalRecordswithFilter);
+
+        $cacheKey = CacheHandler::cacheKey($this->cacheKey, 'sum_tagihan', $cacheFilter, $searchValue);
+
         $totalTagihan = Cache::remember(
-            CacheHandler::cacheKey($this->cacheKey, 'sum_tagihan', $cacheFilter, $searchValue),
+            $cacheKey,
             now()->addMinutes(10),
             fn() => (clone $query)->sum(DB::raw('CAST(COALESCE(scctbill.PAYMENTLEFT, scctbill.BILLAM - COALESCE(scctbill.BILLPAID, 0), 0) AS DECIMAL(18,2))'))
         );
@@ -692,12 +717,15 @@ class DataTagihanController extends Controller
             ->take($rowperpage)
             ->get();
 
+        \Log::info('Rows count from DB: ' . $rows->count());
+        \Log::info('Rows data sample:', ['first_row' => $rows->first() ? $rows->first()->toArray() : null]);
+
         $records = $rows
             ->map(function ($item) {
                 $row = $item->toArray();
                 $nocust = $row['NOCUST'] ?? null;
 
-                return [
+                $result = [
                     'CUSTID' => $row['CUSTID'] ?? null,
                     'NOCUST' => ($nocust && $nocust !== '-') ? $nocust : null,
                     'NUM2ND' => ($row['NUM2ND'] ?? null) && $row['NUM2ND'] !== '-' ? $row['NUM2ND'] : null,
@@ -711,11 +739,18 @@ class DataTagihanController extends Controller
                     'BILLAM_TOTAL' => $row['BILLAM_TOTAL'] ?? 0,
                     'BILLPAID' => $row['BILLPAID'] ?? 0,
                     'SISA' => $row['SISA'] ?? 0,
-                    'detail_group' => true,
+                    'detail_group' => '', // ← UBAH KE EMPTY STRING
                 ];
+
+                \Log::info('Mapped row:', ['row' => $result]);
+
+                return $result;
             })
             ->values()
             ->all();
+
+        \Log::info('Final records count: ' . count($records));
+        \Log::info('Final records sample:', ['sample' => count($records) > 0 ? $records[0] : null]);
 
         $response = array(
             "draw" => intval($draw),
@@ -726,6 +761,9 @@ class DataTagihanController extends Controller
                 'tagihan' => ['location' => 13, 'value' => $totalTagihan, 'columnType' => 'currency'],
             ]
         );
+
+        \Log::info('Response data count: ' . count($response['data']));
+        \Log::info('=== END buildGetDataResponse ===');
 
         return response()->json($response);
     }
