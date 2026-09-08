@@ -26,6 +26,7 @@
             console.log('DataTagihan: Tabel sudah ada, hancurkan dulu');
             $('#main_table').DataTable().destroy();
             $('#main_table tbody').empty();
+            $('#main_table thead').empty();
         }
 
         window.__dataTagihanTableBooted = true;
