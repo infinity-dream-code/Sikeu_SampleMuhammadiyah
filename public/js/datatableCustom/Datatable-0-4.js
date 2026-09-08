@@ -7,26 +7,12 @@ function debounce(func, delay) {
 }
 
 function reformatNumber(data, row, column, node) {
-    // replace spaces with nothing; replace commas with points.
     if (column === 1) {
         return data.replace(',', '.').replaceAll(' ', '');
     } else {
         return data;
     }
 }
-
-// function addCustomNumberFormat(xlsx, numberFormat) {
-//     let numFmtsElement = xlsx.xl['styles.xml'].getElementsByTagName('numFmts')[0];
-//     let numFmtElement = '<numFmt numFmtId="176" formatCode="' + numberFormat + '"/>';
-//     $( numFmtsElement ).append( numFmtElement );
-//     $( numFmtsElement ).attr("count", "7");
-//
-//     let celXfsElement = xlsx.xl['styles.xml'].getElementsByTagName('cellXfs');
-//     let cellStyle = '<xf numFmtId="176" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"'
-//         + ' applyFont="1" applyFill="1" applyBorder="1"/>';
-//     $( celXfsElement ).append( cellStyle );
-//     $( celXfsElement ).attr("count", "69");
-// }
 
 function ensureNumFmts(stylesXml) {
     let numFmts = stylesXml.getElementsByTagName('numFmts')[0];
@@ -65,7 +51,6 @@ function addRupiahStyleOnce(xlsx) {
         );
     }
 
-    // Append xf and return its index
     const cellXfs = stylesXml.getElementsByTagName('cellXfs')[0];
     const xf = stylesXml.createElement('xf');
     xf.setAttribute('numFmtId', numFmtId);
@@ -117,8 +102,8 @@ function applyBoldHeaderRow(sheet, styleIndex) {
 function applyStyleToColumns(sheetXml, styleIndex, targetColumnIndexes) {
     $('row c[r]', sheetXml).each(function () {
         const cell = $(this);
-        const ref = cell.attr('r');         // e.g. "C5"
-        const colLetters = ref.replace(/[0-9]/g, ''); // "C"
+        const ref = cell.attr('r');
+        const colLetters = ref.replace(/[0-9]/g, '');
 
         const colIndex = colLetters.charCodeAt(0) - 65;
 
@@ -146,11 +131,11 @@ function dateToExcelSerial(jsDate) {
 }
 
 const EXCEL_DATE_FORMATS = {
-    'basicdate':  { code: 'd mmmm yyyy',                   id: '177' },
-    'date':       { code: 'dddd", "d mmmm yyyy',           id: '178' },
-    'dateformat': { code: 'dddd", "d mmmm yyyy',           id: '178' },
-    'timestamp':  { code: 'dddd", "d mmmm yyyy hh:mm',     id: '179' },
-    'datetime':   { code: 'dddd", "d mmmm yyyy hh:mm',     id: '179' },
+    'basicdate': { code: 'd mmmm yyyy', id: '177' },
+    'date': { code: 'dddd", "d mmmm yyyy', id: '178' },
+    'dateformat': { code: 'dddd", "d mmmm yyyy', id: '178' },
+    'timestamp': { code: 'dddd", "d mmmm yyyy hh:mm', id: '179' },
+    'datetime': { code: 'dddd", "d mmmm yyyy hh:mm', id: '179' },
 };
 
 function addExcelDateStyle(xlsx, formatCode, numFmtId) {
@@ -367,7 +352,6 @@ function appendExcelCurrencyTotalRow(xlsx, sheet, dataColumns, options = {}) {
 
         const parsed = new DOMParser().parseFromString(rowXml, 'application/xml');
         if (parsed.getElementsByTagName('parsererror').length) {
-            // Fallback jQuery append
             $sheetData.append(rowXml);
         } else {
             const newRow = parsed.documentElement;
@@ -538,49 +522,10 @@ function mergePdfDuplicates(doc, duplicateCols) {
     });
 }
 
-function addCustomNumberFormat(xlsx, numberFormat) {
-
-    //kodingan seko stackoverflow ramudeng njir
-    let numFmtsElement = xlsx.xl['styles.xml'].getElementsByTagName('numFmts')[0];
-    let celXfsElement = xlsx.xl['styles.xml'].getElementsByTagName('cellXfs')[0];
-
-    // Define the Rupiah custom format
-    const rupiahFormat = 'Rp.\\ #,##0;[Red]Rp.\\ -#,##0';
-
-    // Check if `numFmts` already exists, otherwise create it
-    if (!numFmtsElement) {
-        const stylesXml = xlsx.xl['styles.xml'];
-        const newNumFmtsElement = stylesXml.createElement('numFmts');
-        newNumFmtsElement.setAttribute('count', '1');
-        stylesXml.documentElement.getElementsByTagName('styleSheet')[0].appendChild(newNumFmtsElement);
-        numFmtsElement = newNumFmtsElement;
-    }
-
-    // Add the custom number format
-    const numFmtElement = xlsx.xl['styles.xml'].createElement('numFmt');
-    numFmtElement.setAttribute('numFmtId', '176'); // Ensure this ID is not already used
-    numFmtElement.setAttribute('formatCode', rupiahFormat);
-    numFmtsElement.appendChild(numFmtElement);
-
-    // Update the count attribute
-    const currentNumFmtsCount = parseInt(numFmtsElement.getAttribute('count') || '0', 10);
-    numFmtsElement.setAttribute('count', currentNumFmtsCount + 1);
-
-    // Add a new cell style using the custom format
-    const cellStyle = '<xf numFmtId="176" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>';
-    celXfsElement.innerHTML += cellStyle;
-
-    // Update the count attribute for `cellXfs`
-    const currentCellXfsCount = parseInt(celXfsElement.getAttribute('count') || '0', 10);
-    celXfsElement.setAttribute('count', currentCellXfsCount + 1);
-}
-
-
 function formatTargetColumn(xlsx, col) {
     let sheet = xlsx.xl.worksheets['sheet1.xml'];
     $('row c[r^="' + col + '"]', sheet).attr('s', '68');
 }
-
 
 function newexportaction(e, dt, button, config) {
     let self = this;
@@ -624,7 +569,6 @@ function newexportaction(e, dt, button, config) {
 }
 
 function dtButtons(options, buttons) {
-    // Button configurations
     const buttonConfigMap = {
         copy: {
             extend: 'copy',
@@ -800,9 +744,6 @@ function dtButtons(options, buttons) {
                     let columnType = columnInfo.columnType;
 
                     const numberColumn = columnInfo.numberColumn;
-                    // let rawData = table.row(row).data();
-                    // console.log(rawData)
-                    // console.log(exportableColumns)
 
                     if (columnType !== null) {
                         switch (columnType.toLowerCase()) {
@@ -888,9 +829,6 @@ function dtButtons(options, buttons) {
                         return "\0" + data;
                     }
                     if (data.length <= 0) return data
-                    // if (config.extend === "excel" && data.length >= 10 && !isNaN(parseFloat(data)) && isFinite(data)) {
-                    //     return "\0" + data;
-                    // }
                     let el = $.parseHTML(data);
                     let result = '';
                     $.each(el, function (index, item) {
@@ -933,7 +871,6 @@ function createColumns(id, columns, location) {
     headerOrFooter.appendChild(row);
 }
 
-/** Siapkan <tfoot> kosong — jangan duplikasi label header (hanya baris TOTAL dari footerCallback). */
 function prepareTableFoot(id) {
     const table = document.getElementById(id);
     let tfoot = table.querySelector('tfoot');
@@ -954,7 +891,7 @@ async function fetchLanguageFile() {
         const response = await fetch(languageUrl);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        localStorage.setItem(languageKey, JSON.stringify(data)); // Save to localStorage
+        localStorage.setItem(languageKey, JSON.stringify(data));
         return data;
     } catch (error) {
         console.error('Error fetching language file:', error);
@@ -985,7 +922,6 @@ async function dataTableCreate(options) {
         scrollX: options.scrollX ?? false,
         searching: options.searching || false,
         processing: true,
-        // rowId: 'item_id',
         serverSide: options.serverSide ?? true,
         order: options.order ?? [],
         paging: options.paging ?? true,
@@ -1089,10 +1025,11 @@ async function dataTableCreate(options) {
             }
         },
         createdRow: function (row, data, dataIndex) {
+            row.setAttribute('id', `${options.tableId}-row-` + (dataIndex + 1));
             $(row).find('td').each(function (cellIndex) {
                 const columnConfig = options.dataColumns[cellIndex];
-                if (columnConfig.excludeFromSelection) {
-                    $(this).addClass('exclude-selection'); // Add a class to exclude
+                if (columnConfig && columnConfig.excludeFromSelection) {
+                    $(this).addClass('exclude-selection');
                 }
             });
         },
@@ -1154,7 +1091,6 @@ async function dataTableCreate(options) {
             }
         },
         initComplete: function (data) {
-            //// for fixed header only
             if (options.fixedHeader) {
                 if (window.Helpers.isNavbarFixed()) {
                     let navHeight = $('#layout-navbar').outerHeight();
@@ -1198,9 +1134,6 @@ async function dataTableCreate(options) {
                     }, 500));
                 }
             }, 0)
-        },
-        createdRow: function (row, data, dataIndex) {
-            row.setAttribute('id', `${options.tableId}-row-` + (dataIndex + 1));
         },
         footerCallback: function (row, data, start, end, display) {
             let api = this.api();
@@ -1246,13 +1179,11 @@ function dataReload(id = null) {
 
 function dataReFilter(id = null, formId = null) {
     id && $(`#${id}`).DataTable().draw();
-    // if (id) {
-    //     const tableId = $(`#${id}`);
-    //     tableId.DataTable().draw();
-    // }
 }
 
 async function getDT(options) {
+    options.dataColumns = Array.isArray(options.dataColumns) ? options.dataColumns : [];
+
     const finishColumns = function (data) {
         const processedColumns = [];
         $.each(data, function (index, column) {
@@ -1298,13 +1229,16 @@ async function getDT(options) {
                         renderFunc = function (data, type, row) {
                             if (type === 'display' || type === 'filter') {
                                 const value = Number(data);
+
                                 if (!Number.isFinite(value)) {
                                     return 'Rp. 0';
                                 }
+
                                 const formatted = $.fn.dataTable
                                     .render
                                     .number('.', ',', 0, 'Rp. ')
                                     .display(Math.abs(value));
+
                                 return value < 0 ? `Rp. -${formatted.replace('Rp. ', '')}` : formatted;
                             }
                             return data;
@@ -1384,6 +1318,7 @@ async function getDT(options) {
                             if (!data || !(type === 'display' || type === 'filter')) {
                                 return '';
                             }
+
                             const {
                                 buttonClass = 'btn',
                                 buttonIcon,
@@ -1394,6 +1329,7 @@ async function getDT(options) {
                                 buttonLink,
                                 dataVal = true,
                             } = column;
+
                             const iconStyle = buttonIcon ? `<i class="${buttonIcon}"></i>` : buttonIconSVG || '';
                             const resolvedButtonText = column.buttonTextField && row[column.buttonTextField]
                                 ? row[column.buttonTextField]
@@ -1401,7 +1337,9 @@ async function getDT(options) {
                             const title = resolvedButtonText || '';
                             const buttonTextContent = noCaption ? '' : resolvedButtonText;
                             const rowDataJson = dataVal ? JSON.stringify(row).replace(/'/g, "&#39;").replace(/"/g, "&quot;") : null;
+
                             const createButton = (attributes, content) => `<button type="button" class="${buttonClass}" title="${title}" ${attributes}>${content}</button>`;
+
                             switch (button) {
                                 case 'modal':
                                     return createButton(`data-bs-toggle="modal" data-bs-target="${buttonLink}" ${rowDataJson ? "data-val='" + rowDataJson + "'" : ''}`, `${iconStyle}${buttonTextContent}`);
@@ -1460,6 +1398,7 @@ async function getDT(options) {
                     case 'checkbox':
                         renderFunc = function (data, type, row) {
                             if (type === 'display' || type === 'filter') {
+                                let name = column.selectName ? column.selectName : 'checkbox';
                                 return `<input type="checkbox" class="dt-checkboxes form-check-input" name="${column.selectName ? column.selectName : 'checkbox'}[]" value="${data}">`;
                             }
                             return data;
@@ -1472,9 +1411,11 @@ async function getDT(options) {
                             const falseVal = column.falseVal ?? 'Nonaktif';
                             const label = isActive ? trueVal : falseVal;
                             const itemId = row.item_id ?? row.idincrement ?? '';
+
                             if (type === 'export' || type === 'filter') {
                                 return label;
                             }
+
                             if (type === 'display') {
                                 const checked = isActive ? 'checked' : '';
                                 const stateClass = isActive ? 'is-active' : 'is-inactive';
@@ -1488,34 +1429,43 @@ async function getDT(options) {
                                     </div>
                                 `;
                             }
+
                             return data;
                         }
                         break;
                     case 'input':
                         renderFunc = function (data, type, row) {
                             if (type === 'display' || type === 'filter') {
+
                                 let attributes = [
                                     `type="${column.inputType ?? 'text'}"`,
                                     `placeholder="${column.inputPlaceholder ?? column.name}"`,
                                     `name="${column.inputName ?? `input[${column.name}]`}"`,
                                     `class="${column.inputClass ?? 'form-control'}"`,
                                 ];
+
                                 const nameLength = column.inputPlaceholder ?? column.name;
+
                                 if (nameLength.length > 0) {
                                     attributes.push(`style="width: 218.938px;"`)
                                 }
+
                                 if (column.inputReadonly === true) {
                                     attributes.push(`readonly`);
                                 }
+
                                 if (column.inputDisabled === true) {
                                     attributes.push(`disabled`);
                                 }
+
                                 if (Number.isInteger(column.inputMin)) {
                                     attributes.push(`min="${column.inputMin}"`);
                                 }
+
                                 if (Number.isInteger(column.inputMax)) {
                                     attributes.push(`max="${column.inputMax}"`);
                                 }
+
                                 return `<input ${attributes.join(' ')}>`;
                             }
                             return data;
@@ -1524,16 +1474,20 @@ async function getDT(options) {
                     case "array":
                         renderFunc = function (data, type, row) {
                             if (!data) return "";
+
                             const parsed = parseArrayForRow(data, column.currency);
+
                             if (type === 'display') {
                                 return `<ul style="padding-left:16px; margin:0;">${parsed}</ul>`;
                             }
+
                             if (type === 'export') {
                                 return parsed
                                     .replace(/<li>/g, '• ')
                                     .replace(/<\/li>/g, '\n')
                                     .replace(/<[^>]*>/g, '');
                             }
+
                             return parsed.replace(/<[^>]*>/g, '');
                         };
                         break;
@@ -1541,10 +1495,14 @@ async function getDT(options) {
                         renderFunc = function (data, type, row) {
                             const arr = column.array ?? [];
                             if (arr.length === 0) return "";
-                            const defaultValue = column.defaultValue ?? "";
+                            const defaultValue =
+                                column.defaultValue ?? "";
                             const key = column.arrayKey ?? "id";
                             const value = column.arrayValue ?? "val";
-                            const item = arr.find((obj) => obj[key] === data);
+                            const item = arr.find(
+                                (obj) => obj[key] === data,
+                            );
+
                             return item ? item[value] : defaultValue;
                         };
                         break;
@@ -1663,7 +1621,6 @@ async function getDT(options) {
         }
     });
 }
-
 
 function mergeTableRows(tableSelector, columnIndex) {
     const table = $(tableSelector);

@@ -2,7 +2,6 @@
     'use strict';
 
     function bootDataTagihanTable() {
-        // 🔥 HANCURKAN TABEL LAMA JIKA ADA
         if ($.fn.dataTable.isDataTable('#main_table')) {
             console.log('DataTagihan: Hancurkan tabel lama');
             $('#main_table').DataTable().destroy();
@@ -34,12 +33,13 @@
         window.__dataTagihanTableBooted = true;
 
         var dataColumns = [
-            { 
-                data: 'detail_group', 
-                name: '+', 
-                orderable: false, 
+            {
+                data: 'detail_group',
+                name: '+',
+                orderable: false,
                 className: 'text-center',
-                render: function(data, type, row) {
+                excludeFromSelection: true,
+                render: function (data, type, row) {
                     if (type === 'display') {
                         return '<button type="button" class="btn btn-sm btn-primary btn-detail-group">+</button>';
                     }
