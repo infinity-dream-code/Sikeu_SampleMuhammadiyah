@@ -7,12 +7,26 @@ function debounce(func, delay) {
 }
 
 function reformatNumber(data, row, column, node) {
+    // replace spaces with nothing; replace commas with points.
     if (column === 1) {
         return data.replace(',', '.').replaceAll(' ', '');
     } else {
         return data;
     }
 }
+
+// function addCustomNumberFormat(xlsx, numberFormat) {
+//     let numFmtsElement = xlsx.xl['styles.xml'].getElementsByTagName('numFmts')[0];
+//     let numFmtElement = '<numFmt numFmtId="176" formatCode="' + numberFormat + '"/>';
+//     $( numFmtsElement ).append( numFmtElement );
+//     $( numFmtsElement ).attr("count", "7");
+//
+//     let celXfsElement = xlsx.xl['styles.xml'].getElementsByTagName('cellXfs');
+//     let cellStyle = '<xf numFmtId="176" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"'
+//         + ' applyFont="1" applyFill="1" applyBorder="1"/>';
+//     $( celXfsElement ).append( cellStyle );
+//     $( celXfsElement ).attr("count", "69");
+// }
 
 function ensureNumFmts(stylesXml) {
     let numFmts = stylesXml.getElementsByTagName('numFmts')[0];
@@ -51,6 +65,7 @@ function addRupiahStyleOnce(xlsx) {
         );
     }
 
+    // Append xf and return its index
     const cellXfs = stylesXml.getElementsByTagName('cellXfs')[0];
     const xf = stylesXml.createElement('xf');
     xf.setAttribute('numFmtId', numFmtId);
@@ -102,8 +117,9 @@ function applyBoldHeaderRow(sheet, styleIndex) {
 function applyStyleToColumns(sheetXml, styleIndex, targetColumnIndexes) {
     $('row c[r]', sheetXml).each(function () {
         const cell = $(this);
-        const ref = cell.attr('r');
-        const colLetters = ref.replace(/[0-9]/g, '');
+        const ref = cell.attr('r');         // e.g. "C5"
+        const colLetters = ref.replace(/[0-9]/g, ''); // "C"
+
         const colIndex = colLetters.charCodeAt(0) - 65;
 
         if (targetColumnIndexes.includes(colIndex)) {
@@ -351,6 +367,7 @@ function appendExcelCurrencyTotalRow(xlsx, sheet, dataColumns, options = {}) {
 
         const parsed = new DOMParser().parseFromString(rowXml, 'application/xml');
         if (parsed.getElementsByTagName('parsererror').length) {
+            // Fallback jQuery append
             $sheetData.append(rowXml);
         } else {
             const newRow = parsed.documentElement;
@@ -522,11 +539,15 @@ function mergePdfDuplicates(doc, duplicateCols) {
 }
 
 function addCustomNumberFormat(xlsx, numberFormat) {
+
+    //kodingan seko stackoverflow ramudeng njir
     let numFmtsElement = xlsx.xl['styles.xml'].getElementsByTagName('numFmts')[0];
     let celXfsElement = xlsx.xl['styles.xml'].getElementsByTagName('cellXfs')[0];
 
+    // Define the Rupiah custom format
     const rupiahFormat = 'Rp.\\ #,##0;[Red]Rp.\\ -#,##0';
 
+    // Check if `numFmts` already exists, otherwise create it
     if (!numFmtsElement) {
         const stylesXml = xlsx.xl['styles.xml'];
         const newNumFmtsElement = stylesXml.createElement('numFmts');
@@ -535,25 +556,31 @@ function addCustomNumberFormat(xlsx, numberFormat) {
         numFmtsElement = newNumFmtsElement;
     }
 
+    // Add the custom number format
     const numFmtElement = xlsx.xl['styles.xml'].createElement('numFmt');
-    numFmtElement.setAttribute('numFmtId', '176');
+    numFmtElement.setAttribute('numFmtId', '176'); // Ensure this ID is not already used
     numFmtElement.setAttribute('formatCode', rupiahFormat);
     numFmtsElement.appendChild(numFmtElement);
 
+    // Update the count attribute
     const currentNumFmtsCount = parseInt(numFmtsElement.getAttribute('count') || '0', 10);
     numFmtsElement.setAttribute('count', currentNumFmtsCount + 1);
 
+    // Add a new cell style using the custom format
     const cellStyle = '<xf numFmtId="176" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>';
     celXfsElement.innerHTML += cellStyle;
 
+    // Update the count attribute for `cellXfs`
     const currentCellXfsCount = parseInt(celXfsElement.getAttribute('count') || '0', 10);
     celXfsElement.setAttribute('count', currentCellXfsCount + 1);
 }
+
 
 function formatTargetColumn(xlsx, col) {
     let sheet = xlsx.xl.worksheets['sheet1.xml'];
     $('row c[r^="' + col + '"]', sheet).attr('s', '68');
 }
+
 
 function newexportaction(e, dt, button, config) {
     let self = this;
@@ -597,6 +624,7 @@ function newexportaction(e, dt, button, config) {
 }
 
 function dtButtons(options, buttons) {
+    // Button configurations
     const buttonConfigMap = {
         copy: {
             extend: 'copy',
@@ -772,6 +800,9 @@ function dtButtons(options, buttons) {
                     let columnType = columnInfo.columnType;
 
                     const numberColumn = columnInfo.numberColumn;
+                    // let rawData = table.row(row).data();
+                    // console.log(rawData)
+                    // console.log(exportableColumns)
 
                     if (columnType !== null) {
                         switch (columnType.toLowerCase()) {
@@ -857,6 +888,9 @@ function dtButtons(options, buttons) {
                         return "\0" + data;
                     }
                     if (data.length <= 0) return data
+                    // if (config.extend === "excel" && data.length >= 10 && !isNaN(parseFloat(data)) && isFinite(data)) {
+                    //     return "\0" + data;
+                    // }
                     let el = $.parseHTML(data);
                     let result = '';
                     $.each(el, function (index, item) {
@@ -886,10 +920,6 @@ function createColumnsHtml(columns) {
 
 function createColumns(id, columns, location) {
     const table = document.getElementById(id);
-    if (!table) {
-        console.error('Table with id "' + id + '" not found');
-        return;
-    }
     let headerOrFooter = table.querySelector(location);
     if (!headerOrFooter) {
         headerOrFooter = document.createElement(location);
@@ -903,12 +933,9 @@ function createColumns(id, columns, location) {
     headerOrFooter.appendChild(row);
 }
 
+/** Siapkan <tfoot> kosong — jangan duplikasi label header (hanya baris TOTAL dari footerCallback). */
 function prepareTableFoot(id) {
     const table = document.getElementById(id);
-    if (!table) {
-        console.error('Table with id "' + id + '" not found');
-        return;
-    }
     let tfoot = table.querySelector('tfoot');
     if (!tfoot) {
         tfoot = document.createElement('tfoot');
@@ -927,7 +954,7 @@ async function fetchLanguageFile() {
         const response = await fetch(languageUrl);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        localStorage.setItem(languageKey, JSON.stringify(data));
+        localStorage.setItem(languageKey, JSON.stringify(data)); // Save to localStorage
         return data;
     } catch (error) {
         console.error('Error fetching language file:', error);
@@ -958,6 +985,7 @@ async function dataTableCreate(options) {
         scrollX: options.scrollX ?? false,
         searching: options.searching || false,
         processing: true,
+        // rowId: 'item_id',
         serverSide: options.serverSide ?? true,
         order: options.order ?? [],
         paging: options.paging ?? true,
@@ -1064,7 +1092,7 @@ async function dataTableCreate(options) {
             $(row).find('td').each(function (cellIndex) {
                 const columnConfig = options.dataColumns[cellIndex];
                 if (columnConfig.excludeFromSelection) {
-                    $(this).addClass('exclude-selection');
+                    $(this).addClass('exclude-selection'); // Add a class to exclude
                 }
             });
         },
@@ -1126,6 +1154,7 @@ async function dataTableCreate(options) {
             }
         },
         initComplete: function (data) {
+            //// for fixed header only
             if (options.fixedHeader) {
                 if (window.Helpers.isNavbarFixed()) {
                     let navHeight = $('#layout-navbar').outerHeight();
@@ -1217,426 +1246,393 @@ function dataReload(id = null) {
 
 function dataReFilter(id = null, formId = null) {
     id && $(`#${id}`).DataTable().draw();
+    // if (id) {
+    //     const tableId = $(`#${id}`);
+    //     tableId.DataTable().draw();
+    // }
 }
 
 async function getDT(options) {
-    options.dataColumns = Array.isArray(options.dataColumns) ? options.dataColumns : [];
-
-    if (!options.tableId) {
-        console.error('getDT: tableId is required');
-        return;
-    }
-
-    const table = document.getElementById(options.tableId);
-    if (!table) {
-        console.error('getDT: Table with id "' + options.tableId + '" not found');
-        return;
-    }
-
     const finishColumns = function (data) {
-                $.each(data, function (index, column) {
-                    let columnType;
-                    let renderFunc = '';
-                    if (column.columnType || column.columntype) {
-                        columnType = column.columnType || column.columntype;
-                        switch (columnType.toLowerCase()) {
-                            case 'row':
-                            case 'number':
-                            case 'no':
-                                renderFunc = function (data, type, row, meta) {
-                                    if (type === 'display' || type === 'filter') {
-                                        if (options.select) {
-                                            let thisValue = data ?? meta.row + meta.settings._iDisplayStart + 1;
-                                            return `<input type="checkbox" id="siswa-checkbox-${data}" class="dt-checkboxes form-check-input checkbox-siswa" value="${thisValue}" aria-selected="false">`;
-                                        }
-                                        return meta.row + meta.settings._iDisplayStart + 1;
-                                    } else if (type === 'export') {
-                                        return meta.row;
-                                    }
-                                    return data;
+        const processedColumns = [];
+        $.each(data, function (index, column) {
+            let columnType;
+            let renderFunc = '';
+            if (column.columnType || column.columntype) {
+                columnType = column.columnType || column.columntype;
+                switch (columnType.toLowerCase()) {
+                    case 'row':
+                    case 'number':
+                    case 'no':
+                        renderFunc = function (data, type, row, meta) {
+                            if (type === 'display' || type === 'filter') {
+                                if (options.select) {
+                                    let thisValue = data ?? meta.row + meta.settings._iDisplayStart + 1;
+                                    return `<input type="checkbox" id="siswa-checkbox-${data}" class="dt-checkboxes form-check-input checkbox-siswa" value="${thisValue}" aria-selected="false">`;
                                 }
-                                break;
-                            case 'suffix':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter') {
-                                        return data + ' ' + column.suffix;
-                                    }
-                                    return data;
-                                };
-                                break;
-                            case 'prefix':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter') {
-                                        return column.prefix + ' ' + data;
-                                    }
-                                    return data;
-                                };
-                                break;
-                            case 'money':
-                            case 'currency':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter') {
-                                        const value = Number(data);
-
-                                        if (!Number.isFinite(value)) {
-                                            return 'Rp. 0';
-                                        }
-
-                                        const formatted = $.fn.dataTable
-                                            .render
-                                            .number('.', ',', 0, 'Rp. ')
-                                            .display(Math.abs(value));
-
-                                        return value < 0 ? `Rp. -${formatted.replace('Rp. ', '')}` : formatted;
-                                    }
-                                    return data;
-                                };
-                                break;
-                            case 'basicdate':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter') {
-                                        let date = new Date(data);
-                                        let options = {
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric'
-                                        };
-                                        return date.toLocaleDateString('id-ID', options);
-                                    }
-                                    return data;
-                                };
-                                break;
-                            case 'date':
-                            case 'dateformat':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter') {
-                                        let date = new Date(data);
-                                        let options = {
-                                            weekday: 'long',
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric'
-                                        };
-                                        return date.toLocaleDateString('id-ID', options);
-                                    }
-                                    return data;
-                                };
-                                break;
-                            case 'periode':
-                            case 'yearmonth':
-                                renderFunc = function (data, type, row) {
-                                    if (!data || typeof data !== 'string' || data.length !== 6 || !/^\d{6}$/.test(data)) {
-                                        return '';
-                                    }
-                                    const monthsIndonesian = [
-                                        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                                        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-                                    ];
-                                    const year = Math.floor(data / 100);
-                                    const month = data % 100;
-                                    return (month >= 1 && month <= 12) ? `${monthsIndonesian[month - 1]} ${year}` : '';
-                                };
-                                break;
-                            case 'timestamp':
-                            case 'datetime':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter') {
-                                        if (!data || data === '0000-00-00 00:00:00' || data === '0000-00-00') {
-                                            return '';
-                                        }
-                                        const date = new Date(data);
-                                        if (Number.isNaN(date.getTime())) {
-                                            return '';
-                                        }
-                                        const options = {
-                                            weekday: 'long',
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric',
-                                            hour: 'numeric',
-                                            minute: 'numeric'
-                                        };
-                                        return date.toLocaleDateString('id-ID', options);
-                                    }
-                                    return data;
-                                };
-                                break;
-                            case 'button':
-                                renderFunc = function (data, type, row) {
-                                    if (!data || !(type === 'display' || type === 'filter')) {
-                                        return '';
-                                    }
-
-                                    const {
-                                        buttonClass = 'btn',
-                                        buttonIcon,
-                                        buttonIconSVG,
-                                        buttonText,
-                                        noCaption,
-                                        button,
-                                        buttonLink,
-                                        dataVal = true,
-                                    } = column;
-
-                                    const iconStyle = buttonIcon ? `<i class="${buttonIcon}"></i>` : buttonIconSVG || '';
-                                    const resolvedButtonText = column.buttonTextField && row[column.buttonTextField]
-                                        ? row[column.buttonTextField]
-                                        : buttonText;
-                                    const title = resolvedButtonText || '';
-                                    const buttonTextContent = noCaption ? '' : resolvedButtonText;
-                                    const rowDataJson = dataVal ? JSON.stringify(row).replace(/'/g, "&#39;").replace(/"/g, "&quot;") : null;
-
-                                    const createButton = (attributes, content) => `<button type="button" class="${buttonClass}" title="${title}" ${attributes}>${content}</button>`;
-
-                                    switch (button) {
-                                        case 'modal':
-                                            return createButton(`data-bs-toggle="modal" data-bs-target="${buttonLink}" ${rowDataJson ? "data-val='" + rowDataJson + "'" : ''}`, `${iconStyle}${buttonTextContent}`);
-                                        case 'link':
-                                            const link = buttonLink ? buttonLink.replace(':id', row.item_id) : '#';
-                                            return `<a class="${buttonClass}" href="${link}" title="${title}">${iconStyle}${buttonTextContent}</a>`;
-                                        case 'action':
-                                            return createButton(`${rowDataJson ? "data-val='" + rowDataJson + "'" : ''}`, `${iconStyle}${buttonTextContent}`);
-                                        default:
-                                            return '';
-                                    }
-                                }
-                                break;
-                            case 'boolean':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter' || type === 'export') {
-                                        let trueVal = column.trueVal ?? 'benar';
-                                        let falseVal = column.falseVal ?? 'Salah';
-                                        if (type === 'export') {
-                                            console.log(data, trueVal, falseVal);
-                                            if (data === "1" || data === 1 || data === true) {
-                                                return trueVal;
-                                            } else {
-                                                return falseVal;
-                                            }
-                                        }
-                                        if (column.booleanCheck) {
-                                            trueVal = '<i class="ri-check-line"></i>';
-                                            falseVal = '<i class="ri-close-line"></i>';
-                                        }
-                                        if (data === "1" || data === 1 || data === true) {
-                                            return `<span class="badge px-2 rounded-pill bg-label-success">${trueVal}</span>`
-                                        } else {
-                                            return `<span class="badge px-2 rounded-pill bg-label-danger">${falseVal}</span>`
-                                        }
-                                    }
-                                    return data;
-                                }
-                                break;
-                            case 'importstatus':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter') {
-                                        let saveVal = column.saveVal ?? 'Dapat Disimpan';
-                                        let updateVal = column.updateVal ?? 'Update';
-                                        let falseVal = column.falseVal ?? 'Tidak Dapat Disimpan';
-                                        if (data === "1" || data === 1 || data === true) {
-                                            return `<span class="badge px-2 rounded-pill bg-label-success">${saveVal}</span>`;
-                                        } else if (data === "2" || data === 2) {
-                                            return `<span class="badge px-2 rounded-pill bg-label-warning">${updateVal}</span>`;
-                                        } else if (data === "0" || data === 0 || data === false) {
-                                            return `<span class="badge px-2 rounded-pill bg-label-danger">${falseVal}</span>`;
-                                        }
-                                    }
-                                    return data;
-                                }
-                                break;
-                            case 'checkbox':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter') {
-                                        let name = column.selectName ? column.selectName : 'checkbox';
-                                        return `<input type="checkbox" class="dt-checkboxes form-check-input" name="${column.selectName ? column.selectName : 'checkbox'}[]" value="${data}">`;
-                                    }
-                                    return data;
-                                }
-                                break;
-                            case 'switch':
-                                renderFunc = function (data, type, row) {
-                                    const isActive = data === 1 || data === '1' || data === true;
-                                    const trueVal = column.trueVal ?? 'Aktif';
-                                    const falseVal = column.falseVal ?? 'Nonaktif';
-                                    const label = isActive ? trueVal : falseVal;
-                                    const itemId = row.item_id ?? row.idincrement ?? '';
-
-                                    if (type === 'export' || type === 'filter') {
-                                        return label;
-                                    }
-
-                                    if (type === 'display') {
-                                        const checked = isActive ? 'checked' : '';
-                                        const stateClass = isActive ? 'is-active' : 'is-inactive';
-                                        return `
-                                            <div class="dt-switch-wrap ${stateClass}">
-                                                <label class="dt-switch mb-0">
-                                                    <input type="checkbox" class="dt-status-switch" data-id="${itemId}" ${checked}>
-                                                    <span class="dt-switch-slider"></span>
-                                                </label>
-                                                <span class="dt-switch-label">${label}</span>
-                                            </div>
-                                        `;
-                                    }
-
-                                    return data;
-                                }
-                                break;
-                            case 'input':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter') {
-
-                                        let attributes = [
-                                            `type="${column.inputType ?? 'text'}"`,
-                                            `placeholder="${column.inputPlaceholder ?? $column.name}"`,
-                                            `name="${column.inputName ?? `input[${column.name}]`}"`,
-                                            `class="${column.inputClass ?? 'form-control'}"`,
-                                        ];
-
-                                        const nameLength = column.inputPlaceholder ?? $column.name;
-
-                                        if (nameLength.length > 0) {
-                                            attributes.push(`style="width: 218.938px;"`)
-                                        }
-
-                                        if (column.inputReadonly === true) {
-                                            attributes.push(`readonly`);
-                                        }
-
-                                        if (column.inputDisabled === true) {
-                                            attributes.push(`disabled`);
-                                        }
-
-                                        if (Number.isInteger(column.inputMin)) {
-                                            attributes.push(`min="${column.inputMin}"`);
-                                        }
-
-                                        if (Number.isInteger(column.inputMax)) {
-                                            attributes.push(`max="${column.inputMax}"`);
-                                        }
-
-                                        return `<input ${attributes.join(' ')}>`;
-                                    }
-                                    return data;
-                                }
-                                break;
-                            case "array":
-                                renderFunc = function (data, type, row) {
-                                    if (!data) return "";
-
-                                    const parsed = parseArrayForRow(data, column.currency);
-
-                                    if (type === 'display') {
-                                        return `<ul style="padding-left:16px; margin:0;">${parsed}</ul>`;
-                                    }
-
-                                    if (type === 'export') {
-                                        return parsed
-                                            .replace(/<li>/g, '• ')
-                                            .replace(/<\/li>/g, '\n')
-                                            .replace(/<[^>]*>/g, '');
-                                    }
-
-                                    return parsed.replace(/<[^>]*>/g, '');
-                                };
-                                break;
-                            case "arraykey":
-                                renderFunc = function (data, type, row) {
-                                    const arr = column.array ?? [];
-                                    if (arr.length === 0) return "";
-                                    const defaultValue =
-                                        column.defaultValue ?? "";
-                                    const key = column.arrayKey ?? "id";
-                                    const value = column.arrayValue ?? "val";
-                                    const item = arr.find(
-                                        (obj) => obj[key] === data,
-                                    );
-
-                                    return item ? item[value] : defaultValue;
-                                };
-                                break;
-                            case 'nova_edit':
-                                renderFunc = function (data, type, row) {
-                                    if (type === 'display' || type === 'filter') {
-                                        const va = data ?? '-';
-                                        const custid = row.CUSTID ?? row.custid ?? '';
-                                        const nis = row.nocust ?? row.NOCUST ?? '';
-                                        return `<span class="me-1">${va}</span>` +
-                                            `<button type="button" class="btn btn-sm btn-icon btn-outline-primary btn-edit-nova" ` +
-                                            `data-custid="${custid}" data-nis="${nis}" data-nova="${va}" title="Edit Nomor VA">` +
-                                            `<i class="ri-pencil-line"></i></button>`;
-                                    }
-                                    return data;
-                                };
-                                break;
-                            case 'custom_code_tagihan':
-                                renderFunc = function (data, type, row) {
-                                    const billNoreff = String(row?.BILL_NOREFF ?? '').trim().toLowerCase();
-                                    if (billNoreff === 'mobile') {
-                                        return 'ANDROID';
-                                    }
-                                    const descriptions = {
-                                        '1140000': 'Manual Cash',
-                                        '1140001': 'Manual BMI',
-                                        '1140002': 'Manual SALDO',
-                                        '1140003': 'Transfer Bank Lain',
-                                        '1140004': 'Transfer Bank BNI',
-                                        '1140005': 'Transfer Bank BRI',
-                                        '1200001': 'Loket Manual - Beasiswa',
-                                        '1200002': 'Loket Manual - Potongan',
-                                        '1': 'H2H VA BMI - ATM',
-                                        '2': 'H2H VA BMI - Teller',
-                                        '3': 'H2H VA BMI - IBANK',
-                                        '4': 'H2H VA BMI - EDC',
-                                        '5': 'H2H VA BMI - MOBILE',
-                                        '6': 'ANDROID',
-                                        null: 'Nomor VA',
-                                        '': 'Nomor VA'
-                                    };
-                                    return descriptions[data] || data;
-                                }
-                                break;
-                        }
-                    } else {
-                        renderFunc = function (data, type, row) {
-                            if (data === 0 || data === '0') {
-                                return data;
-                            }
-                            if (data === null || data === undefined || data === '') {
-                                return '';
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            } else if (type === 'export') {
+                                return meta.row;
                             }
                             return data;
                         }
+                        break;
+                    case 'suffix':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                return data + ' ' + column.suffix;
+                            }
+                            return data;
+                        };
+                        break;
+                    case 'prefix':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                return column.prefix + ' ' + data;
+                            }
+                            return data;
+                        };
+                        break;
+                    case 'money':
+                    case 'currency':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                const value = Number(data);
+                                if (!Number.isFinite(value)) {
+                                    return 'Rp. 0';
+                                }
+                                const formatted = $.fn.dataTable
+                                    .render
+                                    .number('.', ',', 0, 'Rp. ')
+                                    .display(Math.abs(value));
+                                return value < 0 ? `Rp. -${formatted.replace('Rp. ', '')}` : formatted;
+                            }
+                            return data;
+                        };
+                        break;
+                    case 'basicdate':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                let date = new Date(data);
+                                let options = {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric'
+                                };
+                                return date.toLocaleDateString('id-ID', options);
+                            }
+                            return data;
+                        };
+                        break;
+                    case 'date':
+                    case 'dateformat':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                let date = new Date(data);
+                                let options = {
+                                    weekday: 'long',
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric'
+                                };
+                                return date.toLocaleDateString('id-ID', options);
+                            }
+                            return data;
+                        };
+                        break;
+                    case 'periode':
+                    case 'yearmonth':
+                        renderFunc = function (data, type, row) {
+                            if (!data || typeof data !== 'string' || data.length !== 6 || !/^\d{6}$/.test(data)) {
+                                return '';
+                            }
+                            const monthsIndonesian = [
+                                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+                            ];
+                            const year = Math.floor(data / 100);
+                            const month = data % 100;
+                            return (month >= 1 && month <= 12) ? `${monthsIndonesian[month - 1]} ${year}` : '';
+                        };
+                        break;
+                    case 'timestamp':
+                    case 'datetime':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                if (!data || data === '0000-00-00 00:00:00' || data === '0000-00-00') {
+                                    return '';
+                                }
+                                const date = new Date(data);
+                                if (Number.isNaN(date.getTime())) {
+                                    return '';
+                                }
+                                const options = {
+                                    weekday: 'long',
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric',
+                                    hour: 'numeric',
+                                    minute: 'numeric'
+                                };
+                                return date.toLocaleDateString('id-ID', options);
+                            }
+                            return data;
+                        };
+                        break;
+                    case 'button':
+                        renderFunc = function (data, type, row) {
+                            if (!data || !(type === 'display' || type === 'filter')) {
+                                return '';
+                            }
+                            const {
+                                buttonClass = 'btn',
+                                buttonIcon,
+                                buttonIconSVG,
+                                buttonText,
+                                noCaption,
+                                button,
+                                buttonLink,
+                                dataVal = true,
+                            } = column;
+                            const iconStyle = buttonIcon ? `<i class="${buttonIcon}"></i>` : buttonIconSVG || '';
+                            const resolvedButtonText = column.buttonTextField && row[column.buttonTextField]
+                                ? row[column.buttonTextField]
+                                : buttonText;
+                            const title = resolvedButtonText || '';
+                            const buttonTextContent = noCaption ? '' : resolvedButtonText;
+                            const rowDataJson = dataVal ? JSON.stringify(row).replace(/'/g, "&#39;").replace(/"/g, "&quot;") : null;
+                            const createButton = (attributes, content) => `<button type="button" class="${buttonClass}" title="${title}" ${attributes}>${content}</button>`;
+                            switch (button) {
+                                case 'modal':
+                                    return createButton(`data-bs-toggle="modal" data-bs-target="${buttonLink}" ${rowDataJson ? "data-val='" + rowDataJson + "'" : ''}`, `${iconStyle}${buttonTextContent}`);
+                                case 'link':
+                                    const link = buttonLink ? buttonLink.replace(':id', row.item_id) : '#';
+                                    return `<a class="${buttonClass}" href="${link}" title="${title}">${iconStyle}${buttonTextContent}</a>`;
+                                case 'action':
+                                    return createButton(`${rowDataJson ? "data-val='" + rowDataJson + "'" : ''}`, `${iconStyle}${buttonTextContent}`);
+                                default:
+                                    return '';
+                            }
+                        }
+                        break;
+                    case 'boolean':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter' || type === 'export') {
+                                let trueVal = column.trueVal ?? 'benar';
+                                let falseVal = column.falseVal ?? 'Salah';
+                                if (type === 'export') {
+                                    if (data === "1" || data === 1 || data === true) {
+                                        return trueVal;
+                                    } else {
+                                        return falseVal;
+                                    }
+                                }
+                                if (column.booleanCheck) {
+                                    trueVal = '<i class="ri-check-line"></i>';
+                                    falseVal = '<i class="ri-close-line"></i>';
+                                }
+                                if (data === "1" || data === 1 || data === true) {
+                                    return `<span class="badge px-2 rounded-pill bg-label-success">${trueVal}</span>`
+                                } else {
+                                    return `<span class="badge px-2 rounded-pill bg-label-danger">${falseVal}</span>`
+                                }
+                            }
+                            return data;
+                        }
+                        break;
+                    case 'importstatus':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                let saveVal = column.saveVal ?? 'Dapat Disimpan';
+                                let updateVal = column.updateVal ?? 'Update';
+                                let falseVal = column.falseVal ?? 'Tidak Dapat Disimpan';
+                                if (data === "1" || data === 1 || data === true) {
+                                    return `<span class="badge px-2 rounded-pill bg-label-success">${saveVal}</span>`;
+                                } else if (data === "2" || data === 2) {
+                                    return `<span class="badge px-2 rounded-pill bg-label-warning">${updateVal}</span>`;
+                                } else if (data === "0" || data === 0 || data === false) {
+                                    return `<span class="badge px-2 rounded-pill bg-label-danger">${falseVal}</span>`;
+                                }
+                            }
+                            return data;
+                        }
+                        break;
+                    case 'checkbox':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                return `<input type="checkbox" class="dt-checkboxes form-check-input" name="${column.selectName ? column.selectName : 'checkbox'}[]" value="${data}">`;
+                            }
+                            return data;
+                        }
+                        break;
+                    case 'switch':
+                        renderFunc = function (data, type, row) {
+                            const isActive = data === 1 || data === '1' || data === true;
+                            const trueVal = column.trueVal ?? 'Aktif';
+                            const falseVal = column.falseVal ?? 'Nonaktif';
+                            const label = isActive ? trueVal : falseVal;
+                            const itemId = row.item_id ?? row.idincrement ?? '';
+                            if (type === 'export' || type === 'filter') {
+                                return label;
+                            }
+                            if (type === 'display') {
+                                const checked = isActive ? 'checked' : '';
+                                const stateClass = isActive ? 'is-active' : 'is-inactive';
+                                return `
+                                    <div class="dt-switch-wrap ${stateClass}">
+                                        <label class="dt-switch mb-0">
+                                            <input type="checkbox" class="dt-status-switch" data-id="${itemId}" ${checked}>
+                                            <span class="dt-switch-slider"></span>
+                                        </label>
+                                        <span class="dt-switch-label">${label}</span>
+                                    </div>
+                                `;
+                            }
+                            return data;
+                        }
+                        break;
+                    case 'input':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                let attributes = [
+                                    `type="${column.inputType ?? 'text'}"`,
+                                    `placeholder="${column.inputPlaceholder ?? column.name}"`,
+                                    `name="${column.inputName ?? `input[${column.name}]`}"`,
+                                    `class="${column.inputClass ?? 'form-control'}"`,
+                                ];
+                                const nameLength = column.inputPlaceholder ?? column.name;
+                                if (nameLength.length > 0) {
+                                    attributes.push(`style="width: 218.938px;"`)
+                                }
+                                if (column.inputReadonly === true) {
+                                    attributes.push(`readonly`);
+                                }
+                                if (column.inputDisabled === true) {
+                                    attributes.push(`disabled`);
+                                }
+                                if (Number.isInteger(column.inputMin)) {
+                                    attributes.push(`min="${column.inputMin}"`);
+                                }
+                                if (Number.isInteger(column.inputMax)) {
+                                    attributes.push(`max="${column.inputMax}"`);
+                                }
+                                return `<input ${attributes.join(' ')}>`;
+                            }
+                            return data;
+                        }
+                        break;
+                    case "array":
+                        renderFunc = function (data, type, row) {
+                            if (!data) return "";
+                            const parsed = parseArrayForRow(data, column.currency);
+                            if (type === 'display') {
+                                return `<ul style="padding-left:16px; margin:0;">${parsed}</ul>`;
+                            }
+                            if (type === 'export') {
+                                return parsed
+                                    .replace(/<li>/g, '• ')
+                                    .replace(/<\/li>/g, '\n')
+                                    .replace(/<[^>]*>/g, '');
+                            }
+                            return parsed.replace(/<[^>]*>/g, '');
+                        };
+                        break;
+                    case "arraykey":
+                        renderFunc = function (data, type, row) {
+                            const arr = column.array ?? [];
+                            if (arr.length === 0) return "";
+                            const defaultValue = column.defaultValue ?? "";
+                            const key = column.arrayKey ?? "id";
+                            const value = column.arrayValue ?? "val";
+                            const item = arr.find((obj) => obj[key] === data);
+                            return item ? item[value] : defaultValue;
+                        };
+                        break;
+                    case 'nova_edit':
+                        renderFunc = function (data, type, row) {
+                            if (type === 'display' || type === 'filter') {
+                                const va = data ?? '-';
+                                const custid = row.CUSTID ?? row.custid ?? '';
+                                const nis = row.nocust ?? row.NOCUST ?? '';
+                                return `<span class="me-1">${va}</span>` +
+                                    `<button type="button" class="btn btn-sm btn-icon btn-outline-primary btn-edit-nova" ` +
+                                    `data-custid="${custid}" data-nis="${nis}" data-nova="${va}" title="Edit Nomor VA">` +
+                                    `<i class="ri-pencil-line"></i></button>`;
+                            }
+                            return data;
+                        };
+                        break;
+                    case 'custom_code_tagihan':
+                        renderFunc = function (data, type, row) {
+                            const billNoreff = String(row?.BILL_NOREFF ?? '').trim().toLowerCase();
+                            if (billNoreff === 'mobile') {
+                                return 'ANDROID';
+                            }
+                            const descriptions = {
+                                '1140000': 'Manual Cash',
+                                '1140001': 'Manual BMI',
+                                '1140002': 'Manual SALDO',
+                                '1140003': 'Transfer Bank Lain',
+                                '1140004': 'Transfer Bank BNI',
+                                '1140005': 'Transfer Bank BRI',
+                                '1200001': 'Loket Manual - Beasiswa',
+                                '1200002': 'Loket Manual - Potongan',
+                                '1': 'H2H VA BMI - ATM',
+                                '2': 'H2H VA BMI - Teller',
+                                '3': 'H2H VA BMI - IBANK',
+                                '4': 'H2H VA BMI - EDC',
+                                '5': 'H2H VA BMI - MOBILE',
+                                '6': 'ANDROID',
+                                null: 'Nomor VA',
+                                '': 'Nomor VA'
+                            };
+                            return descriptions[data] || data;
+                        }
+                        break;
+                }
+            } else {
+                renderFunc = function (data, type, row) {
+                    if (data === 0 || data === '0') {
+                        return data;
                     }
+                    if (data === null || data === undefined || data === '') {
+                        return '';
+                    }
+                    return data;
+                }
+            }
 
-                    const isDuplicate = column.duplicate ?? false;
-                    const columnDef = {
-                        data: column.data,
-                        name: column.name,
-                        duplicate: isDuplicate,
-                        searchable: column.searchable ?? false,
-                        orderable: column.orderable ?? false,
-                        render: renderFunc ?? false,
-                        className: column.className ?? false,
-                        search: false,
-                        exportable: column.exportable ?? false,
-                        visible: column.visible ?? true,
-                        excludeFromSelection: column.excludeFromSelection ?? false,
-                        columnType: columnType ?? null,
-                        numberColumn: column.numberColumn ?? false,
-                    };
-                    if (column.data === 'FUrutan' || column.data === 'BILLAM') {
-                        columnDef.type = 'num';
-                    }
-                    options.dataColumns.push(columnDef);
-                })
-                if (options.thead) {
-                    createColumns(options.tableId, options.dataColumns, 'thead');
-                }
-                if (options.tfoot) {
-                    prepareTableFoot(options.tableId);
-                }
-                dataTableCreate(options);
+            const isDuplicate = column.duplicate ?? false;
+            const columnDef = {
+                data: column.data,
+                name: column.name,
+                duplicate: isDuplicate,
+                searchable: column.searchable ?? false,
+                orderable: column.orderable ?? false,
+                render: renderFunc ?? false,
+                className: column.className ?? false,
+                search: false,
+                exportable: column.exportable ?? false,
+                visible: column.visible ?? true,
+                excludeFromSelection: column.excludeFromSelection ?? false,
+                columnType: columnType ?? null,
+                numberColumn: column.numberColumn ?? false,
+            };
+            if (column.data === 'FUrutan' || column.data === 'BILLAM') {
+                columnDef.type = 'num';
+            }
+            processedColumns.push(columnDef);
+        })
+
+        options.dataColumns = processedColumns;
+
+        if (options.thead) {
+            createColumns(options.tableId, options.dataColumns, 'thead');
+        }
+        if (options.tfoot) {
+            prepareTableFoot(options.tableId);
+        }
+        dataTableCreate(options);
     };
 
     const prefetched = options.prefetchedColumns;
@@ -1653,17 +1649,18 @@ async function getDT(options) {
     $.ajax({
         url: options.columnUrl,
         success: finishColumns,
-            error: function (xhr) {
-                const descriptions = {
-                    401: 'Sesi anda telah habis, silahkan login kembali!',
-                    403: 'Anda tidak memiliki izin untuk mengakses kolom data.',
-                    404: 'Endpoint kolom data tidak ditemukan.',
-                    500: 'Gagal memuat definisi kolom tabel.',
-                };
-                errorAlert(descriptions[xhr.status] || 'Gagal memuat kolom tabel. Silahkan muat ulang halaman.');
-            }
-        });
+        error: function (xhr) {
+            const descriptions = {
+                401: 'Sesi anda telah habis, silahkan login kembali!',
+                403: 'Anda tidak memiliki izin untuk mengakses kolom data.',
+                404: 'Endpoint kolom data tidak ditemukan.',
+                500: 'Gagal memuat definisi kolom tabel.',
+            };
+            errorAlert(descriptions[xhr.status] || 'Gagal memuat kolom tabel. Silahkan muat ulang halaman.');
+        }
+    });
 }
+
 
 function mergeTableRows(tableSelector, columnIndex) {
     const table = $(tableSelector);
