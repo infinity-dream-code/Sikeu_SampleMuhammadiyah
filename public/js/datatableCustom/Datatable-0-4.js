@@ -1609,7 +1609,7 @@ async function getDT(options) {
                 duplicate: isDuplicate,
                 searchable: column.searchable ?? false,
                 orderable: column.orderable ?? false,
-                render: renderFunc ?? false,
+                render: typeof column.render === 'function' ? column.render : renderFunc,
                 className: column.className ?? false,
                 search: false,
                 exportable: column.exportable ?? false,
@@ -1618,6 +1618,9 @@ async function getDT(options) {
                 columnType: columnType ?? null,
                 numberColumn: column.numberColumn ?? false,
             };
+            if (column.defaultContent !== undefined) {
+                columnDef.defaultContent = column.defaultContent;
+            }
             if (column.data === 'FUrutan' || column.data === 'BILLAM') {
                 columnDef.type = 'num';
             }
