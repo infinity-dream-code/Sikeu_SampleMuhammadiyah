@@ -7,26 +7,12 @@ function debounce(func, delay) {
 }
 
 function reformatNumber(data, row, column, node) {
-    // replace spaces with nothing; replace commas with points.
     if (column === 1) {
         return data.replace(',', '.').replaceAll(' ', '');
     } else {
         return data;
     }
 }
-
-// function addCustomNumberFormat(xlsx, numberFormat) {
-//     let numFmtsElement = xlsx.xl['styles.xml'].getElementsByTagName('numFmts')[0];
-//     let numFmtElement = '<numFmt numFmtId="176" formatCode="' + numberFormat + '"/>';
-//     $( numFmtsElement ).append( numFmtElement );
-//     $( numFmtsElement ).attr("count", "7");
-//
-//     let celXfsElement = xlsx.xl['styles.xml'].getElementsByTagName('cellXfs');
-//     let cellStyle = '<xf numFmtId="176" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"'
-//         + ' applyFont="1" applyFill="1" applyBorder="1"/>';
-//     $( celXfsElement ).append( cellStyle );
-//     $( celXfsElement ).attr("count", "69");
-// }
 
 function ensureNumFmts(stylesXml) {
     let numFmts = stylesXml.getElementsByTagName('numFmts')[0];
@@ -65,7 +51,6 @@ function addRupiahStyleOnce(xlsx) {
         );
     }
 
-    // Append xf and return its index
     const cellXfs = stylesXml.getElementsByTagName('cellXfs')[0];
     const xf = stylesXml.createElement('xf');
     xf.setAttribute('numFmtId', numFmtId);
@@ -117,9 +102,8 @@ function applyBoldHeaderRow(sheet, styleIndex) {
 function applyStyleToColumns(sheetXml, styleIndex, targetColumnIndexes) {
     $('row c[r]', sheetXml).each(function () {
         const cell = $(this);
-        const ref = cell.attr('r');         // e.g. "C5"
-        const colLetters = ref.replace(/[0-9]/g, ''); // "C"
-
+        const ref = cell.attr('r');
+        const colLetters = ref.replace(/[0-9]/g, '');
         const colIndex = colLetters.charCodeAt(0) - 65;
 
         if (targetColumnIndexes.includes(colIndex)) {
@@ -367,7 +351,6 @@ function appendExcelCurrencyTotalRow(xlsx, sheet, dataColumns, options = {}) {
 
         const parsed = new DOMParser().parseFromString(rowXml, 'application/xml');
         if (parsed.getElementsByTagName('parsererror').length) {
-            // Fallback jQuery append
             $sheetData.append(rowXml);
         } else {
             const newRow = parsed.documentElement;
@@ -539,15 +522,11 @@ function mergePdfDuplicates(doc, duplicateCols) {
 }
 
 function addCustomNumberFormat(xlsx, numberFormat) {
-
-    //kodingan seko stackoverflow ramudeng njir
     let numFmtsElement = xlsx.xl['styles.xml'].getElementsByTagName('numFmts')[0];
     let celXfsElement = xlsx.xl['styles.xml'].getElementsByTagName('cellXfs')[0];
 
-    // Define the Rupiah custom format
     const rupiahFormat = 'Rp.\\ #,##0;[Red]Rp.\\ -#,##0';
 
-    // Check if `numFmts` already exists, otherwise create it
     if (!numFmtsElement) {
         const stylesXml = xlsx.xl['styles.xml'];
         const newNumFmtsElement = stylesXml.createElement('numFmts');
@@ -556,31 +535,25 @@ function addCustomNumberFormat(xlsx, numberFormat) {
         numFmtsElement = newNumFmtsElement;
     }
 
-    // Add the custom number format
     const numFmtElement = xlsx.xl['styles.xml'].createElement('numFmt');
-    numFmtElement.setAttribute('numFmtId', '176'); // Ensure this ID is not already used
+    numFmtElement.setAttribute('numFmtId', '176');
     numFmtElement.setAttribute('formatCode', rupiahFormat);
     numFmtsElement.appendChild(numFmtElement);
 
-    // Update the count attribute
     const currentNumFmtsCount = parseInt(numFmtsElement.getAttribute('count') || '0', 10);
     numFmtsElement.setAttribute('count', currentNumFmtsCount + 1);
 
-    // Add a new cell style using the custom format
     const cellStyle = '<xf numFmtId="176" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>';
     celXfsElement.innerHTML += cellStyle;
 
-    // Update the count attribute for `cellXfs`
     const currentCellXfsCount = parseInt(celXfsElement.getAttribute('count') || '0', 10);
     celXfsElement.setAttribute('count', currentCellXfsCount + 1);
 }
-
 
 function formatTargetColumn(xlsx, col) {
     let sheet = xlsx.xl.worksheets['sheet1.xml'];
     $('row c[r^="' + col + '"]', sheet).attr('s', '68');
 }
-
 
 function newexportaction(e, dt, button, config) {
     let self = this;
@@ -624,7 +597,6 @@ function newexportaction(e, dt, button, config) {
 }
 
 function dtButtons(options, buttons) {
-    // Button configurations
     const buttonConfigMap = {
         copy: {
             extend: 'copy',
@@ -800,9 +772,6 @@ function dtButtons(options, buttons) {
                     let columnType = columnInfo.columnType;
 
                     const numberColumn = columnInfo.numberColumn;
-                    // let rawData = table.row(row).data();
-                    // console.log(rawData)
-                    // console.log(exportableColumns)
 
                     if (columnType !== null) {
                         switch (columnType.toLowerCase()) {
@@ -888,9 +857,6 @@ function dtButtons(options, buttons) {
                         return "\0" + data;
                     }
                     if (data.length <= 0) return data
-                    // if (config.extend === "excel" && data.length >= 10 && !isNaN(parseFloat(data)) && isFinite(data)) {
-                    //     return "\0" + data;
-                    // }
                     let el = $.parseHTML(data);
                     let result = '';
                     $.each(el, function (index, item) {
@@ -920,6 +886,10 @@ function createColumnsHtml(columns) {
 
 function createColumns(id, columns, location) {
     const table = document.getElementById(id);
+    if (!table) {
+        console.error('Table with id "' + id + '" not found');
+        return;
+    }
     let headerOrFooter = table.querySelector(location);
     if (!headerOrFooter) {
         headerOrFooter = document.createElement(location);
@@ -933,9 +903,12 @@ function createColumns(id, columns, location) {
     headerOrFooter.appendChild(row);
 }
 
-/** Siapkan <tfoot> kosong — jangan duplikasi label header (hanya baris TOTAL dari footerCallback). */
 function prepareTableFoot(id) {
     const table = document.getElementById(id);
+    if (!table) {
+        console.error('Table with id "' + id + '" not found');
+        return;
+    }
     let tfoot = table.querySelector('tfoot');
     if (!tfoot) {
         tfoot = document.createElement('tfoot');
@@ -954,7 +927,7 @@ async function fetchLanguageFile() {
         const response = await fetch(languageUrl);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        localStorage.setItem(languageKey, JSON.stringify(data)); // Save to localStorage
+        localStorage.setItem(languageKey, JSON.stringify(data));
         return data;
     } catch (error) {
         console.error('Error fetching language file:', error);
@@ -985,7 +958,6 @@ async function dataTableCreate(options) {
         scrollX: options.scrollX ?? false,
         searching: options.searching || false,
         processing: true,
-        // rowId: 'item_id',
         serverSide: options.serverSide ?? true,
         order: options.order ?? [],
         paging: options.paging ?? true,
@@ -1092,7 +1064,7 @@ async function dataTableCreate(options) {
             $(row).find('td').each(function (cellIndex) {
                 const columnConfig = options.dataColumns[cellIndex];
                 if (columnConfig.excludeFromSelection) {
-                    $(this).addClass('exclude-selection'); // Add a class to exclude
+                    $(this).addClass('exclude-selection');
                 }
             });
         },
@@ -1154,7 +1126,6 @@ async function dataTableCreate(options) {
             }
         },
         initComplete: function (data) {
-            //// for fixed header only
             if (options.fixedHeader) {
                 if (window.Helpers.isNavbarFixed()) {
                     let navHeight = $('#layout-navbar').outerHeight();
@@ -1246,14 +1217,21 @@ function dataReload(id = null) {
 
 function dataReFilter(id = null, formId = null) {
     id && $(`#${id}`).DataTable().draw();
-    // if (id) {
-    //     const tableId = $(`#${id}`);
-    //     tableId.DataTable().draw();
-    // }
 }
 
 async function getDT(options) {
     options.dataColumns = Array.isArray(options.dataColumns) ? options.dataColumns : [];
+
+    if (!options.tableId) {
+        console.error('getDT: tableId is required');
+        return;
+    }
+
+    const table = document.getElementById(options.tableId);
+    if (!table) {
+        console.error('getDT: Table with id "' + options.tableId + '" not found');
+        return;
+    }
 
     const finishColumns = function (data) {
                 $.each(data, function (index, column) {
@@ -1505,7 +1483,6 @@ async function getDT(options) {
                                 }
                                 break;
                             case 'input':
-                                //for text/number only
                                 renderFunc = function (data, type, row) {
                                     if (type === 'display' || type === 'filter') {
 
@@ -1549,21 +1526,17 @@ async function getDT(options) {
 
                                     const parsed = parseArrayForRow(data, column.currency);
 
-                                    // UI rendering (HTML list)
                                     if (type === 'display') {
                                         return `<ul style="padding-left:16px; margin:0;">${parsed}</ul>`;
                                     }
 
-                                    // Export rendering (plain text)
                                     if (type === 'export') {
-                                        // Convert <li> to readable lines
                                         return parsed
                                             .replace(/<li>/g, '• ')
                                             .replace(/<\/li>/g, '\n')
-                                            .replace(/<[^>]*>/g, ''); // strip any remaining HTML
+                                            .replace(/<[^>]*>/g, '');
                                     }
 
-                                    // Default fallback (filter/sort)
                                     return parsed.replace(/<[^>]*>/g, '');
                                 };
                                 break;
@@ -1598,7 +1571,6 @@ async function getDT(options) {
                                 break;
                             case 'custom_code_tagihan':
                                 renderFunc = function (data, type, row) {
-                                    // ANDROID hanya dari scctbill.NOREFF = Mobile
                                     const billNoreff = String(row?.BILL_NOREFF ?? '').trim().toLowerCase();
                                     if (billNoreff === 'mobile') {
                                         return 'ANDROID';
@@ -1644,7 +1616,6 @@ async function getDT(options) {
                         duplicate: isDuplicate,
                         searchable: column.searchable ?? false,
                         orderable: column.orderable ?? false,
-                        // orderable: !isDuplicate ? false : (column.orderable ?? false),
                         render: renderFunc ?? false,
                         className: column.className ?? false,
                         search: false,
@@ -1693,7 +1664,6 @@ async function getDT(options) {
             }
         });
 }
-
 
 function mergeTableRows(tableSelector, columnIndex) {
     const table = $(tableSelector);
