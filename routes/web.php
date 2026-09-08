@@ -120,6 +120,7 @@ Route::prefix("admin")
                 Route::prefix("data-tagihan")->name("data-tagihan.")->group(function () {
                     Route::controller(\App\Http\Controllers\Admin\Keuangan\TagihanSiswa\DataTagihanController::class)->group(function () {
                         Route::get("get-data", "getData")->name("get-data");
+                        Route::get("get-bills-for-group", "getBillsForGroup")->name("get-bills-for-group");
                         Route::get("get-column", "getColumn")->name("get-column");
                         Route::get("get-trans-log/{id}", "getTransLog")->name("get-trans-log");
                         Route::get("cetak-rekap", "cetak")->name("cetak-rekap");

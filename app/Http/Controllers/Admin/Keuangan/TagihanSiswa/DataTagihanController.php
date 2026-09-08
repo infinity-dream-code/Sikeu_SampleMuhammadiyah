@@ -66,9 +66,6 @@ class DataTagihanController extends Controller
         return blank($this->sekolah) ? 'all-units' : 'unit-' . Str::slug((string) $this->sekolah);
     }
 
-    /**
-     * Tagihan belum lunas — termasuk cicilan (sudah terbayar sebagian, PAIDST masih 0).
-     */
     private function applyBelumLunasScope($query, string $billTable = 'scctbill'): void
     {
         $sisaExpr = "CAST(COALESCE({$billTable}.PAYMENTLEFT, {$billTable}.BILLAM - COALESCE({$billTable}.BILLPAID, 0), 0) AS SIGNED)";
@@ -125,7 +122,7 @@ class DataTagihanController extends Controller
     {
         return [
             [
-                'data' => 'detail_trx',
+                'data' => 'detail_group',
                 'name' => '+',
                 'orderable' => false,
                 'dataVal' => false,
@@ -134,7 +131,7 @@ class DataTagihanController extends Controller
                 'excludeFromSelection' => true,
                 'button' => 'action',
                 'buttonText' => '+',
-                'buttonClass' => 'btn btn-sm btn-primary btn-detail-trx',
+                'buttonClass' => 'btn btn-sm btn-primary btn-detail-group',
                 'buttonLink' => '#',
                 'noCaption' => false,
                 'exportable' => false,
@@ -148,53 +145,11 @@ class DataTagihanController extends Controller
             ['data' => 'CODE02', 'name' => 'Unit', 'searchable' => true, 'orderable' => true, 'exportable' => true],
             ['data' => 'DESC02', 'name' => 'Kelas', 'searchable' => true, 'orderable' => true, 'exportable' => true],
             ['data' => 'DESC03', 'name' => 'Kelompok', 'searchable' => true, 'orderable' => true, 'exportable' => true],
-            ['data' => 'BILLNM', 'name' => 'Nama Tagihan', 'searchable' => true, 'orderable' => true, 'exportable' => true],
-            ['data' => 'BILLAM_TOTAL', 'name' => 'Jumlah Tagihan', 'searchable' => true, 'orderable' => true, 'columnType' => 'currency', 'className' => 'text-end', 'exportable' => true],
-            ['data' => 'BILLAM', 'name' => 'Sisa Tagihan', 'searchable' => true, 'orderable' => true, 'columnType' => 'currency', 'className' => 'text-end', 'exportable' => true],
-            ['data' => 'BILLPAID', 'name' => 'Jumlah Terbayar', 'searchable' => true, 'orderable' => true, 'columnType' => 'currency', 'className' => 'text-end', 'exportable' => true],
-            ['data' => 'PAIDDT', 'name' => 'Tanggal Bayar', 'searchable' => true, 'orderable' => true, 'columnType' => 'timestamp', 'exportable' => true],
             ['data' => 'BILLAC', 'name' => 'Periode', 'searchable' => true, 'orderable' => true, 'exportable' => true],
-            [
-                'data' => 'FUrutan',
-                'name' => 'Urutan',
-                'searchable' => true,
-                'orderable' => true,
-                'exportable' => true,
-                'duplicate' => false,
-            ],
-            [
-                'data' => 'delete',
-                'name' => 'Reversal',
-                'orderable' => false,
-                'dataVal' => false,
-                'columnType' => 'button',
-                'className' => 'text-center exclude-selection',
-                'excludeFromSelection' => true,
-                'button' => 'action',
-                'buttonText' => 'Reversal',
-                'buttonTextField' => 'delete_label',
-                'buttonClass' => 'btn btn-sm btn-warning btn-reversal',
-                'buttonLink' => '#modal-delete',
-                'buttonIcon' => 'ri-arrow-go-back-line me-2',
-                'exportable' => false,
-                'duplicate' => false,
-            ],
-            [
-                'data' => 'hapus',
-                'name' => 'Hapus',
-                'orderable' => false,
-                'dataVal' => false,
-                'columnType' => 'button',
-                'className' => 'text-center exclude-selection',
-                'excludeFromSelection' => true,
-                'button' => 'action',
-                'buttonText' => 'Hapus',
-                'buttonClass' => 'btn btn-sm btn-danger btn-hapus-tagihan',
-                'buttonLink' => '#modal-hapus',
-                'buttonIcon' => 'ri-delete-bin-line me-2',
-                'exportable' => false,
-                'duplicate' => false,
-            ],
+            ['data' => 'JUMLAH_TAGIHAN', 'name' => 'Jml Item', 'orderable' => true, 'className' => 'text-end', 'exportable' => true],
+            ['data' => 'BILLAM_TOTAL', 'name' => 'Jumlah Tagihan', 'orderable' => true, 'columnType' => 'currency', 'className' => 'text-end', 'exportable' => true],
+            ['data' => 'BILLPAID', 'name' => 'Jumlah Terbayar', 'orderable' => true, 'columnType' => 'currency', 'className' => 'text-end', 'exportable' => true],
+            ['data' => 'SISA', 'name' => 'Sisa Tagihan', 'orderable' => true, 'columnType' => 'currency', 'className' => 'text-end', 'exportable' => true],
         ];
     }
 
@@ -205,6 +160,7 @@ class DataTagihanController extends Controller
         $data['dataTitle'] = $this->dataTitle;
         $data['columnsUrl'] = $this->columnsUrl();
         $data['datasUrl'] = $this->datasUrl();
+        $data['billsUrl'] = route('admin.keuangan.tagihan-siswa.data-tagihan.get-bills-for-group');
         $data['tableColumns'] = $this->getColumn();
         $data['post'] = mst_tagihan::select(['tagihan'])->get();
         $data['thn_aka'] = mst_thn_aka::select(['thn_aka'])
@@ -323,7 +279,7 @@ class DataTagihanController extends Controller
 
         $tagihan = scctbill::where('AA', $id)
             ->where('FSTSBolehBayar', 1)
-            ->when($custId, fn ($q) => $q->where('CUSTID', $custId))
+            ->when($custId, fn($q) => $q->where('CUSTID', $custId))
             ->first();
 
         if (!$tagihan) {
@@ -378,7 +334,7 @@ class DataTagihanController extends Controller
         $tagihan = scctbill::where('AA', $id)
             ->where('FSTSBolehBayar', '=', 1)
             ->where('PAIDST', '=', 0)
-            ->when($custId, fn ($q) => $q->where('CUSTID', $custId))
+            ->when($custId, fn($q) => $q->where('CUSTID', $custId))
             ->first();
 
         if (!$tagihan) {
@@ -498,14 +454,14 @@ class DataTagihanController extends Controller
 
             $posts = $mstTagihan->map(function ($item) use ($groupedByBill) {
                 $item->tagihans = ($groupedByBill->get($item->tagihan) ?? collect())
-                    ->map(fn ($row) => $row->toArray())
+                    ->map(fn($row) => $row->toArray())
                     ->values()
                     ->all();
 
                 return $item;
             });
 
-            if ($posts->every(fn ($post) => empty($post->tagihans))) {
+            if ($posts->every(fn($post) => empty($post->tagihans))) {
                 return response()->json(['message' => 'Data Kosong'], 422);
             }
 
@@ -521,32 +477,61 @@ class DataTagihanController extends Controller
     {
         $filter = $request;
         if (!$filter['custid']) return response()->json(['error' => 'Siswa tidak ditemukan']);
-        $filter['draw'] = 2;
-        $filter['start'] = 0;
-        $filter['length'] = "poll";
 
         $siswa = scctcust::where('custid', $filter['custid'])->first();
         if (!$siswa) return response()->json(['error' => 'Siswa tidak ditemukan']);
 
-        $request->merge([
-            'filter' => array_merge($request->input('filter', []), [
-                'custid' => $filter['custid']
-            ])
-        ]);
-
-        $filter = $request;
-        $tagihans = $this->getData($filter);
-
         try {
-            $tagihans = json_decode(json_encode($tagihans), true);
-            $tagihans = $tagihans['original']['data'];
+            $query = scctbill::join('scctcust', 'scctcust.CUSTID', '=', 'scctbill.CUSTID')
+                ->select($this->billSelectColumns())
+                ->selectRaw('CAST(COALESCE(scctbill.FUrutan, 0) AS SIGNED) AS FUrutan')
+                ->where('scctbill.CUSTID', $filter['custid']);
+
+            $this->applyBelumLunasScope($query);
+            $query->where('scctbill.FSTSBolehBayar', 1)
+                ->whereRaw('CAST(COALESCE(scctcust.STCUST, 0) AS SIGNED) = 1');
+
+            $this->applyUnitScope($query);
+
+            $rows = $query
+                ->orderBy('scctbill.BILLAC', 'desc')
+                ->orderByRaw('CAST(COALESCE(scctbill.FUrutan, 0) AS SIGNED) ASC')
+                ->get();
+
+            $lastPaymentDates = $this->getLastPaymentDatesForBills($rows);
+
+            $tagihans = $rows->map(fn($item) => $this->mapBillRow($item, $lastPaymentDates))->values()->all();
+
             if (!$tagihans) return response()->json(['message' => 'Tagihan Tidak Ditemukan'], 422);
             return response()->json(['tagihans' => $tagihans, 'siswa' => $siswa], 200);
-//            $pdf = Pdf::loadView('pdf.data_tagihan.kartu-siswa', ['tagihans' => $tagihans, 'siswa' => $siswa, 'tanda_tangan' => $tanda_tangan]);
-//            return $pdf->download('kartu-siswa.pdf');
-        } catch (\Dompdf\Exception $e) {
-            return response()->json(['message' => 'Tagihan Tidak Ditemukan', 'error' => $e], 422);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'Tagihan Tidak Ditemukan', 'error' => $e->getMessage()], 422);
         }
+    }
+
+    private function billSelectColumns(): array
+    {
+        return array_unique([
+            'scctcust.nocust as NOCUST',
+            'scctcust.nmcust as NMCUST',
+            'scctcust.NUM2ND',
+            'scctcust.CODE02',
+            'scctcust.DESC02',
+            'scctcust.DESC03',
+            'scctbill.AA',
+            'scctbill.BILLNM',
+            'scctbill.BILLAC',
+            'scctbill.BILLAM',
+            'scctbill.BILLPAID',
+            'scctbill.PAYMENTLEFT',
+            'scctbill.PAIDST',
+            'scctbill.PAIDDT',
+            'scctbill.INSTALLMENT',
+            'scctbill.TRANSNO as BILL_TRANSNO',
+            'scctbill.BTA',
+            'scctbill.FIDBANK',
+            'scctbill.CUSTID',
+        ]);
     }
 
     public function getData(Request $request)
@@ -576,10 +561,10 @@ class DataTagihanController extends Controller
         $search_arr = $request->get('search', []);
         $searchValue = $search_arr['value'] ?? '';
 
-        $columnName = 'scctbill.FUrutan';
-        $columnSortOrder = 'asc';
+        $columnName = 'scctbill.BILLAC';
+        $columnSortOrder = 'desc';
         $userOrdered = false;
-        $nonSortableData = ['AA', 'naik', 'turun', 'delete', 'hapus', 'print', 'NOVA', 'detail_trx'];
+        $nonSortableData = ['detail_group', 'NOVA'];
 
         if (!empty($order_arr)) {
             $columnIndex = $columnIndex_arr[0]['column'] ?? null;
@@ -599,13 +584,11 @@ class DataTagihanController extends Controller
         }
 
         $sortableColumns = [
-            'BILLNM' => 'scctbill.BILLNM',
-            'BILLAM_TOTAL' => 'scctbill.BILLAM',
-            'BILLAM' => 'scctbill.PAYMENTLEFT',
-            'BILLPAID' => 'scctbill.BILLPAID',
             'BILLAC' => 'scctbill.BILLAC',
-            'FUrutan' => 'scctbill.FUrutan',
-            'PAIDDT' => 'scctbill.PAIDDT',
+            'JUMLAH_TAGIHAN' => 'JUMLAH_TAGIHAN',
+            'BILLAM_TOTAL' => 'BILLAM_TOTAL',
+            'BILLPAID' => 'BILLPAID',
+            'SISA' => 'SISA',
             'NOCUST' => 'scctcust.nocust',
             'NUM2ND' => 'scctcust.NUM2ND',
             'NMCUST' => 'scctcust.nmcust',
@@ -615,8 +598,6 @@ class DataTagihanController extends Controller
         ];
         if (isset($sortableColumns[$columnName])) {
             $columnName = $sortableColumns[$columnName];
-        } elseif ($columnName && !str_contains($columnName, '.')) {
-            $columnName = 'scctbill.' . $columnName;
         }
 
         $filterQuery = $this->resolveTagihanFilterQuery($request);
@@ -628,34 +609,35 @@ class DataTagihanController extends Controller
             'scctcust.NUM2ND',
             'scctcust.DESC02',
             'scctcust.DESC03',
-            'scctbill.BILLNM',
+            'scctbill.BILLAC',
         ];
 
-        $select = array_unique([
-            'scctcust.nocust as NOCUST',
-            'scctcust.nmcust as NMCUST',
+        $groupBy = [
+            'scctcust.CUSTID',
+            'scctbill.BILLAC',
+            'scctcust.nocust',
             'scctcust.NUM2ND',
+            'scctcust.nmcust',
             'scctcust.CODE02',
             'scctcust.DESC02',
             'scctcust.DESC03',
-            'scctbill.AA',
-            'scctbill.BILLNM',
-            'scctbill.BILLAC',
-            'scctbill.BILLAM',
-            'scctbill.BILLPAID',
-            'scctbill.PAYMENTLEFT',
-            'scctbill.PAIDST',
-            'scctbill.PAIDDT',
-            'scctbill.INSTALLMENT',
-            'scctbill.TRANSNO as BILL_TRANSNO',
-            'scctbill.BTA',
-            'scctbill.FIDBANK',
-            'scctbill.CUSTID',
-        ]);
+        ];
 
         $query = scctbill::join('scctcust', 'scctcust.CUSTID', '=', 'scctbill.CUSTID')
-            ->select($select)
-            ->selectRaw('CAST(COALESCE(scctbill.FUrutan, 0) AS SIGNED) AS FUrutan');
+            ->select([
+                'scctcust.CUSTID',
+                'scctcust.nocust as NOCUST',
+                'scctcust.NUM2ND',
+                'scctcust.nmcust as NMCUST',
+                'scctcust.CODE02',
+                'scctcust.DESC02',
+                'scctcust.DESC03',
+                'scctbill.BILLAC',
+            ])
+            ->selectRaw('COUNT(*) as JUMLAH_TAGIHAN')
+            ->selectRaw('SUM(CAST(COALESCE(scctbill.BILLAM, 0) AS DECIMAL(18,2))) as BILLAM_TOTAL')
+            ->selectRaw('SUM(CAST(COALESCE(scctbill.BILLPAID, 0) AS DECIMAL(18,2))) as BILLPAID')
+            ->selectRaw('SUM(CAST(COALESCE(scctbill.PAYMENTLEFT, scctbill.BILLAM - COALESCE(scctbill.BILLPAID, 0), 0) AS DECIMAL(18,2))) as SISA');
 
         $this->applyBelumLunasScope($query);
         $query
@@ -669,11 +651,10 @@ class DataTagihanController extends Controller
                     }
                 });
             })
-            ->where(function ($query) use ($filterQuery) {
-                if ($filterQuery) {
-                    $filterQuery($query);
-                }
-            });
+            ->when($filterQuery, function ($query) use ($filterQuery) {
+                $filterQuery($query);
+            })
+            ->groupBy($groupBy);
 
         $this->applyUnitScope($query);
 
@@ -689,53 +670,23 @@ class DataTagihanController extends Controller
 
         $cacheKey = CacheHandler::cacheKey($this->cacheKey, 'sum_tagihan', $cacheFilter, $searchValue);
 
-        $totalTagihan =
-            Cache::remember(
-                $cacheKey,
-                now()->addMinutes(10),
-                fn() => (clone $query)->sum('PAYMENTLEFT')
-            );
+        $totalTagihan = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(10),
+            fn() => (clone $query)->sum('SISA')
+        );
 
         $rowperpage = $rowperpage == "poll" ? $totalRecords : $rowperpage;
         $recordsQuery = clone $query;
 
         if ($userOrdered) {
             $dir = $columnSortOrder === 'desc' ? 'DESC' : 'ASC';
-            if ($columnName === 'scctbill.FUrutan') {
-                $recordsQuery->orderByRaw('CAST(COALESCE(scctbill.FUrutan, 0) AS SIGNED) ' . $dir);
-            } elseif ($columnName === 'scctbill.BILLAM') {
-                $recordsQuery->orderByRaw('CAST(COALESCE(scctbill.BILLAM, 0) AS DECIMAL(18,2)) ' . $dir);
-            } elseif ($columnName === 'scctbill.PAYMENTLEFT') {
-                $recordsQuery->orderByRaw('CAST(COALESCE(scctbill.PAYMENTLEFT, 0) AS DECIMAL(18,2)) ' . $dir);
-            } elseif ($columnName === 'scctbill.BILLPAID') {
-                $recordsQuery->orderByRaw('CAST(COALESCE(scctbill.BILLPAID, 0) AS DECIMAL(18,2)) ' . $dir);
-            } else {
-                $recordsQuery->orderBy($columnName, $columnSortOrder);
-            }
+            $recordsQuery->orderBy(DB::raw($columnName), $dir);
             $recordsQuery
-                ->orderBy('scctcust.nocust', 'asc')
-                ->orderBy('scctbill.AA', 'asc');
+                ->orderBy('scctcust.nocust', 'asc');
         } else {
             $recordsQuery
-                ->orderBy('scctbill.BILLAC')
-                ->orderByRaw("
-                    CASE
-                        WHEN scctbill.BILLNM LIKE '%JULI%' THEN 1
-                        WHEN scctbill.BILLNM LIKE '%AGUSTUS%' THEN 2
-                        WHEN scctbill.BILLNM LIKE '%SEPTEMBER%' THEN 3
-                        WHEN scctbill.BILLNM LIKE '%OKTOBER%' THEN 4
-                        WHEN scctbill.BILLNM LIKE '%NOVEMBER%' THEN 5
-                        WHEN scctbill.BILLNM LIKE '%DESEMBER%' THEN 6
-                        WHEN scctbill.BILLNM LIKE '%JANUARI%' THEN 7
-                        WHEN scctbill.BILLNM LIKE '%FEBRUARI%' THEN 8
-                        WHEN scctbill.BILLNM LIKE '%MARET%' THEN 9
-                        WHEN scctbill.BILLNM LIKE '%APRIL%' THEN 10
-                        WHEN scctbill.BILLNM LIKE '%MEI%' THEN 11
-                        WHEN scctbill.BILLNM LIKE '%JUNI%' THEN 12
-                        ELSE 999
-                    END
-                ")
-                ->orderByRaw('CAST(COALESCE(scctbill.FUrutan, 0) AS SIGNED) ASC')
+                ->orderBy('scctbill.BILLAC', 'desc')
                 ->orderBy('scctcust.nocust', 'asc');
         }
 
@@ -744,70 +695,110 @@ class DataTagihanController extends Controller
             ->take($rowperpage)
             ->get();
 
-        $lastPaymentDates = $this->getLastPaymentDatesForBills($rows);
-
         $records = $rows
-            ->map(function ($item, $index) use ($lastPaymentDates) {
+            ->map(function ($item) {
                 $row = $item->toArray();
-                $get = static fn (string $key) => $row[$key] ?? $row[strtolower($key)] ?? null;
-
-                $nocust = $get('NOCUST');
-                $num2nd = $get('NUM2ND');
-                $furutan = $get('FUrutan');
-                $aa = (string) ($get('AA') ?? '');
-                $billPaid = (int) ($get('BILLPAID') ?? 0);
-                $paidDtRaw = $get('PAIDDT');
-                $paidDtDisplay = $this->resolvePaidDateDisplay($paidDtRaw, $billPaid, $aa, $lastPaymentDates);
-
-                $canHapus = $this->canHapusTagihan($item);
+                $nocust = $row['NOCUST'] ?? null;
 
                 return [
-                    'AA' => $get('AA'),
-                    'item_id' => $get('AA'),
-                    'CUSTID' => $get('CUSTID'),
+                    'CUSTID' => $row['CUSTID'] ?? null,
                     'NOCUST' => ($nocust && $nocust !== '-') ? $nocust : null,
-                    'NUM2ND' => ($num2nd && $num2nd !== '-') ? $num2nd : null,
+                    'NUM2ND' => ($row['NUM2ND'] ?? null) && $row['NUM2ND'] !== '-' ? $row['NUM2ND'] : null,
                     'NOVA' => ($nocust && $nocust !== '-') ? scctcust::showVA($nocust) : null,
-                    'NMCUST' => $get('NMCUST'),
-                    'CODE02' => $get('CODE02'),
-                    'DESC02' => $get('DESC02'),
-                    'DESC03' => $get('DESC03'),
-                    'BILLNM' => $get('BILLNM'),
-                    'BILLAM_TOTAL' => $get('BILLAM'),
-                    'BILLAM' => $get('PAYMENTLEFT'),
-                    'BILLPAID' => $get('BILLPAID'),
-                    'PAYMENTLEFT' => $get('PAYMENTLEFT'),
-                    'BILLAC' => $get('BILLAC'),
-                    'BTA' => $get('BTA'),
-                    'PAIDST' => $get('PAIDST'),
-                    'INSTALLMENT' => (int) ($get('INSTALLMENT') ?? 0),
-                    'PAIDDT' => $paidDtDisplay,
-                    'PAIDDT_ISO' => $paidDtDisplay,
-                    'FIDBANK' => $get('FIDBANK'),
-                    'FUrutan' => ($furutan === null || $furutan === '')
-                        ? '0'
-                        : (string) (int) $furutan,
-                    'detail_trx' => true,
-                    'TRX_LOGS' => [],
-                    'BILL_TRANSNO' => $get('BILL_TRANSNO'),
-                    'print' => true,
-                    'delete' => $billPaid > 0,
-                    'delete_label' => 'Reversal',
-                    'hapus' => $canHapus,
+                    'NMCUST' => $row['NMCUST'] ?? null,
+                    'CODE02' => $row['CODE02'] ?? null,
+                    'DESC02' => $row['DESC02'] ?? null,
+                    'DESC03' => $row['DESC03'] ?? null,
+                    'BILLAC' => $row['BILLAC'] ?? null,
+                    'JUMLAH_TAGIHAN' => (int) ($row['JUMLAH_TAGIHAN'] ?? 0),
+                    'BILLAM_TOTAL' => $row['BILLAM_TOTAL'] ?? 0,
+                    'BILLPAID' => $row['BILLPAID'] ?? 0,
+                    'SISA' => $row['SISA'] ?? 0,
+                    'detail_group' => true,
                 ];
             })
             ->values()
             ->all();
+
         $response = array(
             "draw" => intval($draw),
             "recordsTotal" => $totalRecords ?? 0,
             "recordsFiltered" => $totalRecordswithFilter ?? 0,
             "data" => $records ?? [],
             'totals' => [
-                'tagihan' => ['location' => 11, 'value' => $totalTagihan, 'columnType' => 'currency'],
+                'tagihan' => ['location' => 13, 'value' => $totalTagihan, 'columnType' => 'currency'],
             ]
         );
         return response()->json($response);
+    }
+
+    private function mapBillRow($item, array $lastPaymentDates): array
+    {
+        $row = $item instanceof \Illuminate\Database\Eloquent\Model ? $item->toArray() : (array) $item;
+        $get = static fn(string $key) => $row[$key] ?? $row[strtolower($key)] ?? null;
+
+        $aa = (string) ($get('AA') ?? '');
+        $billPaid = (int) ($get('BILLPAID') ?? 0);
+        $paidDtRaw = $get('PAIDDT');
+        $paidDtDisplay = $this->resolvePaidDateDisplay($paidDtRaw, $billPaid, $aa, $lastPaymentDates);
+        $furutan = $get('FUrutan');
+        $canHapus = $item instanceof scctbill ? $this->canHapusTagihan($item) : false;
+
+        return [
+            'AA' => $get('AA'),
+            'item_id' => $get('AA'),
+            'CUSTID' => $get('CUSTID'),
+            'BILLNM' => $get('BILLNM'),
+            'BILLAC' => $get('BILLAC'),
+            'BILLAM_TOTAL' => $get('BILLAM'),
+            'BILLAM' => $get('PAYMENTLEFT'),
+            'BILLPAID' => $billPaid,
+            'PAYMENTLEFT' => $get('PAYMENTLEFT'),
+            'PAIDST' => $get('PAIDST'),
+            'INSTALLMENT' => (int) ($get('INSTALLMENT') ?? 0),
+            'PAIDDT' => $paidDtDisplay,
+            'PAIDDT_ISO' => $paidDtDisplay,
+            'FIDBANK' => $get('FIDBANK'),
+            'BTA' => $get('BTA'),
+            'BILL_TRANSNO' => $get('BILL_TRANSNO') ?? $get('TRANSNO'),
+            'FUrutan' => ($furutan === null || $furutan === '') ? '0' : (string) (int) $furutan,
+            'delete' => $billPaid > 0,
+            'hapus' => $canHapus,
+        ];
+    }
+
+    public function getBillsForGroup(Request $request)
+    {
+        $custId = $request->input('custid');
+        $billac = $request->input('billac');
+
+        if (blank($custId) || blank($billac)) {
+            return response()->json(['message' => 'Parameter tidak lengkap'], 422);
+        }
+
+        $query = scctbill::join('scctcust', 'scctcust.CUSTID', '=', 'scctbill.CUSTID')
+            ->select($this->billSelectColumns())
+            ->selectRaw('CAST(COALESCE(scctbill.FUrutan, 0) AS SIGNED) AS FUrutan')
+            ->where('scctbill.CUSTID', $custId)
+            ->where('scctbill.BILLAC', $billac);
+
+        $this->applyBelumLunasScope($query);
+        $query
+            ->where('scctbill.FSTSBolehBayar', 1)
+            ->whereRaw('CAST(COALESCE(scctcust.STCUST, 0) AS SIGNED) = 1');
+
+        $this->applyUnitScope($query);
+
+        $rows = $query
+            ->orderByRaw('CAST(COALESCE(scctbill.FUrutan, 0) AS SIGNED) ASC')
+            ->orderBy('scctbill.BILLNM', 'asc')
+            ->get();
+
+        $lastPaymentDates = $this->getLastPaymentDatesForBills($rows);
+
+        $records = $rows->map(fn($item) => $this->mapBillRow($item, $lastPaymentDates))->values()->all();
+
+        return response()->json(['data' => $records], 200);
     }
 
     private function getLastPaymentDatesForBills(iterable $rows): array
@@ -817,7 +808,7 @@ class DataTagihanController extends Controller
 
         foreach ($rows as $item) {
             $row = $item instanceof \Illuminate\Database\Eloquent\Model ? $item->toArray() : (array) $item;
-            $get = static fn (string $key) => $row[$key] ?? $row[strtolower($key)] ?? null;
+            $get = static fn(string $key) => $row[$key] ?? $row[strtolower($key)] ?? null;
 
             $aa = (string) ($get('AA') ?? '');
             if ($aa === '') {
@@ -921,7 +912,6 @@ class DataTagihanController extends Controller
         }
 
         try {
-            // Relasi utama: sccttran.BILLID = scctbill.AA (sesuai struktur DB).
             $primaryLogs = sccttran::query()
                 ->where('BILLID', $aa)
                 ->orderBy('TRXDATE', 'desc')
@@ -929,7 +919,6 @@ class DataTagihanController extends Controller
 
             $logsCollection = $primaryLogs;
             if ($logsCollection->isEmpty()) {
-                // Fallback untuk data lama yang tidak konsisten pengisian BILLID.
                 $logsCollection = sccttran::query()
                     ->where(function ($q) use ($billTransNo, $billName) {
                         if (!blank($billTransNo) && (string) $billTransNo !== '-') {
@@ -985,7 +974,6 @@ class DataTagihanController extends Controller
             }
         }
 
-        // Paksa relasi utama berdasarkan AA/BILLID; custid hanya pembantu jika ada.
         $logs = $this->getTransactionLogsForBill($custId, $id, $billTransNo, $billName);
 
         if (empty($logs)) {
@@ -1021,7 +1009,8 @@ class DataTagihanController extends Controller
             "{$this->cacheKey}:total_all_data:{$scopeKey}",
             now()->addMinutes(10),
             function () {
-                $query = scctbill::join('scctcust', 'scctcust.CUSTID', '=', 'scctbill.CUSTID');
+                $query = scctbill::join('scctcust', 'scctcust.CUSTID', '=', 'scctbill.CUSTID')
+                    ->groupBy('scctcust.CUSTID', 'scctbill.BILLAC');
 
                 $this->applyBelumLunasScope($query);
                 $query
@@ -1048,7 +1037,7 @@ class DataTagihanController extends Controller
 
         return array_values(array_filter(
             $rawPosts,
-            fn ($item) => !is_null($item) && $item !== '' && strtolower((string) $item) !== 'all'
+            fn($item) => !is_null($item) && $item !== '' && strtolower((string) $item) !== 'all'
         ));
     }
 

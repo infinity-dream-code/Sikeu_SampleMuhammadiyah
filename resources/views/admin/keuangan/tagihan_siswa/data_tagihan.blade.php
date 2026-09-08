@@ -6,17 +6,21 @@
     <link rel="stylesheet" href="{{asset('main/libs/datatables-responsive-bs5/responsive.bootstrap5.css')}}">
     <link rel="stylesheet" href="{{asset('main/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css')}}">
     <style>
-        .trx-log-detail-row > td {
+        .trx-log-detail-row > td, .bills-detail-row > td {
             padding: 0 !important;
             background: #f5f7fb;
             border-left: 3px solid #696cff;
         }
 
-        .trx-log-panel {
+        .bills-detail-row > td {
+            border-left-color: #71dd37;
+        }
+
+        .trx-log-panel, .bills-panel {
             padding: 0.75rem 1rem 1rem;
         }
 
-        .trx-log-panel__header {
+        .trx-log-panel__header, .bills-panel__header {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
@@ -24,13 +28,13 @@
             margin-bottom: 0.75rem;
         }
 
-        .trx-log-panel__title {
+        .trx-log-panel__title, .bills-panel__title {
             font-weight: 600;
             color: #566a7f;
             margin-right: auto;
         }
 
-        .trx-log-panel__title i {
+        .trx-log-panel__title i, .bills-panel__title i {
             color: #696cff;
             margin-right: 0.25rem;
         }
@@ -47,7 +51,7 @@
             color: #566a7f;
         }
 
-        .trx-log-table thead th {
+        .trx-log-table thead th, .bills-table thead th {
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.02em;
@@ -56,7 +60,11 @@
             color: #566a7f;
         }
 
-        .trx-log-table tbody td {
+        .bills-table thead th {
+            background: #eafbea !important;
+        }
+
+        .trx-log-table tbody td, .bills-table tbody td {
             font-size: 0.82rem;
             vertical-align: middle;
         }
@@ -77,11 +85,21 @@
             font-weight: 600;
         }
 
-        .trx-log-empty {
+        .trx-log-empty, .bills-empty {
             padding: 1.25rem;
             text-align: center;
             color: #a1acb8;
             font-size: 0.9rem;
+        }
+
+        .badge-lunas {
+            background: #71dd37;
+            color: #fff;
+        }
+
+        .badge-belum-lunas {
+            background: #ff9f43;
+            color: #fff;
         }
     </style>
 @endsection
@@ -248,14 +266,6 @@
             </form>
         </div>
         <div class="card-datatable table-responsive text-nowrap">
-            <div id="tagihan-urutan-toolbar" class="d-none">
-                <button type="button" id="btn-naik-toolbar" class="btn btn-outline-primary me-2" disabled>
-                    <span class="ri-arrow-up-line me-1"></span>Naikkan
-                </button>
-                <button type="button" id="btn-turun-toolbar" class="btn btn-outline-primary me-2" disabled>
-                    <span class="ri-arrow-down-line me-1"></span>Turunkan
-                </button>
-            </div>
             <table class="table table-sm table-bordered table-hover"
                    id="main_table">
                 <thead class="table-light">
@@ -410,97 +420,19 @@
         </div>
     </form>
 
-    <form id="form-ubah-urutan" class="mainForm">
-        <div class="modal modal-blur fade" id="modal-ubah-urutan" tabindex="-1" role="dialog" aria-hidden="true"
-             data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-status bg-danger"></div>
-                    <div class="modal-header ">
-                        <div class="modal-title">
-                            Ubah Urutan
-                        </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-capitalize text-center py-4">
-                        <span id="logo-urutan" class="ri-delete-bin-line ri-5x"></span>
-                        <h4 id="caption-urutan">Ubah Urutan Tagihan Siswa?</h4>
-                        <span id="sub-caption-urutan"></span>
-                    </div>
-                    <div class="modal-body py-4">
-                        <fieldset class="form-fieldset">
-                            <div class="mb-3 row">
-                                <label for="nocust" class="col-sm-4 col-form-label form-label-sm">NIS</label>
-                                <div class="col">
-                                    <input type="text" readonly class="form-control  form-control-sm" id="urutan-nocust"
-                                           name="nocust">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label for="nmcust" class="col-sm-4 col-form-label form-label-sm">Nama Siswa</label>
-                                <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control form-control-sm" id="urutan-nmcust"
-                                           name="nmcust">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label for="billnm" class="col-sm-4 col-form-label form-label-sm">Nama Tagihan</label>
-                                <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control form-control-sm" id="urutan-billnm"
-                                           name="billnm">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label for="billam" class="col-sm-4 col-form-label form-label-sm">Nominal</label>
-                                <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control form-control-sm" id="urutan-billam"
-                                           name="billam">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label for="furutan" class="col-sm-4 col-form-label form-label-sm">Urutan
-                                    Tagihan</label>
-                                <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control form-control-sm" id="urutan-furutan"
-                                           name="furutan">
-                                </div>
-                            </div>
-                        </fieldset>
-                        <input type="hidden" id="urutan_tagihan_id" name="item_id" value="">
-                        <input type="hidden" id="user_urutan_tagihan_id" name="custid" value="">
-                        <input type="hidden" id="urutan_tagihan" name="urutan_tagihan" value="">
-                    </div>
-                    <div class="modal-footer ">
-                        <div class="w-100">
-                            <div class="row">
-                                <div class="col">
-                                    <input type="reset" class="btn btn-outline-secondary w-100" value="Batal"
-                                           data-bs-dismiss="modal">
-                                </div>
-                                <div class="col">
-                                    <input id="submit-urutan-tagihan" type="submit" value="Naikkan"
-                                           class="btn btn-secondary w-100">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-
     <script src="{{asset('main/libs/select2/select2.js')}}"></script>
     <script src="{{asset('main/libs/datatables-bs5/datatables-bootstrap5.js')}}"></script>
     <script src="{{asset('js/va-format.js')}}?v=20260619"></script>
-    <script src="{{asset('js/datatableCustom/Datatable-0-4.js')}}?v=20260724-excel-total-fix"></script>
+    <script src="{{asset('js/datatableCustom/Datatable-0-4.js')}}?v=20260724-group-view"></script>
     <script>
         window.DATA_TAGIHAN_BOOT = {
             columnUrl: @json($columnsUrl ?? null),
             dataUrl: @json($datasUrl ?? null),
+            billsUrl: @json($billsUrl ?? null),
             prefetchedColumns: @json($tableColumns ?? []),
         };
     </script>
-    <script src="{{asset('js/data-tagihan-init.js')}}?v=20260724-excel-total"></script>
+    <script src="{{asset('js/data-tagihan-init.js')}}?v=20260908-group-view"></script>
     <script src="{{asset('main/libs/moment/moment.js')}}"></script>
     <script src="{{asset('main/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js')}}"></script>
 
@@ -538,14 +470,14 @@
             thead: true,
             tfoot: true,
             scrollX: true,
-            order: [[15, 'asc']],
+            order: [[9, 'desc']],
             paging: true,
             searching: true,
             fixedHeader: false,
             pageLength: 10,
             lengthMenu: [10, 25, 50, 75, 100],
             select: true,
-            rowId: 'AA',
+            rowId: null,
             buttons: ["excel", "pdf", "print"],
             excelCurrencyTotal: true,
             pdfOrientation: 'landscape',
@@ -554,6 +486,8 @@
             pdfFontSize: 6,
             pdfHeaderFontSize: 7,
         };
+
+        const billsUrl = window.DATA_TAGIHAN_BOOT?.billsUrl ?? '';
 
         function initDataTagihanTable() {
             if (window.__dataTagihanTableBooted) {
@@ -575,14 +509,8 @@
                 return;
             }
             getDT(dtOptions);
-            setTimeout(ensureUrutanToolbarButtons, 300);
-            $(`#${dtOptions.tableId}`).on('init.dt draw.dt select.dt deselect.dt', function () {
-                ensureUrutanToolbarButtons();
-                syncTagihanCheckboxSelection();
-                updateUrutanToolbarState();
-            });
             $(`#${dtOptions.tableId}`).on('draw.dt', function () {
-                closeAllTransLogRows();
+                closeAllBillsRows();
             });
             if (dtOptions.formId) {
                 let filterForm = $(`#${dtOptions.formId}`);
@@ -610,9 +538,6 @@
         const modalHapusElement = document.getElementById('modal-hapus');
         const modalHapus = new bootstrap.Modal(document.getElementById('modal-hapus'));
 
-        const modalUrutElement = document.getElementById('modal-ubah-urutan');
-        const modalUrut = new bootstrap.Modal(document.getElementById('modal-ubah-urutan'));
-
         modalDeleteElement.addEventListener('hide.bs.modal', function () {
             const form = document.getElementById('form-delete');
             form.reset();
@@ -622,301 +547,6 @@
             const form = document.getElementById('form-hapus');
             form.reset();
         });
-
-        function fillFormValue(id, rowEl) {
-            const rowData = DT[`${dtOptions.tableId}`].row(rowEl).data();
-            Object.entries(rowData).forEach(([key, value]) => {
-                let input = document.querySelector(`#${id} [name="${key.toLowerCase()}"]`);
-                if (input) {
-                    input.value = value ?? '';
-                }
-            });
-            if (id === 'form-ubah-urutan') {
-                const urutanId = document.getElementById('urutan_tagihan_id');
-                const custId = document.getElementById('user_urutan_tagihan_id');
-                const furutan = document.getElementById('urutan-furutan');
-                if (urutanId) urutanId.value = rowData.item_id ?? rowData.AA ?? '';
-                if (custId) custId.value = rowData.CUSTID ?? '';
-                if (furutan) furutan.value = rowData.FUrutan ?? rowData.furutan ?? '0';
-            }
-            if (id === 'form-delete') {
-                const deleteId = document.getElementById('delete_id');
-                const custId = document.getElementById('user_delete_id');
-                const billPaid = parseInt(rowData.BILLPAID ?? rowData.billpaid ?? '0', 10) || 0;
-
-                if (billPaid <= 0) {
-                    return;
-                }
-
-                if (deleteId) deleteId.value = rowData.item_id ?? rowData.AA ?? '';
-                if (custId) custId.value = rowData.CUSTID ?? '';
-            }
-            if (id === 'form-hapus') {
-                const hapusId = document.getElementById('hapus_id');
-                const custId = document.getElementById('user_hapus_id');
-                const billPaid = parseInt(rowData.BILLPAID ?? rowData.billpaid ?? '0', 10) || 0;
-                const installment = parseInt(rowData.INSTALLMENT ?? rowData.installment ?? '0', 10) || 0;
-                const paidSt = parseInt(rowData.PAIDST ?? rowData.paidst ?? '0', 10) || 0;
-
-                if (billPaid > 0 || installment > 0 || paidSt !== 0) {
-                    warningAlert('Tagihan tidak dapat dihapus. Syarat: PAIDST = 0, INSTALLMENT = 0, belum pernah dibayar.');
-                    return;
-                }
-
-                document.getElementById('hapus_nocust').value = rowData.NOCUST ?? '';
-                document.getElementById('hapus_nmcust').value = rowData.NMCUST ?? '';
-                document.getElementById('hapus_billnm').value = rowData.BILLNM ?? '';
-                document.getElementById('hapus_billam').value = rowData.BILLAM_TOTAL ?? rowData.BILLAM ?? '';
-                if (hapusId) hapusId.value = rowData.item_id ?? rowData.AA ?? '';
-                if (custId) custId.value = rowData.CUSTID ?? '';
-            }
-        }
-
-        function canChangeUrutan(rowEl) {
-            const rowData = DT[`${dtOptions.tableId}`].row(rowEl).data();
-            const urut = parseInt(rowData?.FUrutan ?? rowData?.furutan ?? '0', 10);
-            if (!Number.isFinite(urut) || urut <= 0) {
-                warningAlert('Tagihan dengan urutan 0 tidak dapat dinaikkan atau diturunkan.');
-                return false;
-            }
-            return true;
-        }
-
-        function getSelectedTagihanRows() {
-            if (!DT[`${dtOptions.tableId}`]) {
-                return [];
-            }
-            return DT[`${dtOptions.tableId}`].rows({selected: true}).data().toArray();
-        }
-
-        function getSelectedTagihanRow(showAlert = true) {
-            const selectedRows = getSelectedTagihanRows();
-            if (selectedRows.length === 0) {
-                if (showAlert) {
-                    warningAlert('Pilih 1 data tagihan dulu.');
-                }
-                return null;
-            }
-            if (selectedRows.length > 1) {
-                if (showAlert) {
-                    warningAlert('Pilih 1 data saja untuk ubah urutan.');
-                }
-                return null;
-            }
-            return selectedRows[0];
-        }
-
-        function syncTagihanCheckboxSelection() {
-            const dt = DT[`${dtOptions.tableId}`];
-            if (!dt) {
-                return;
-            }
-
-            const selectedIndexes = dt.rows({selected: true}).indexes().toArray();
-            $('#main_table .checkbox-siswa').each(function () {
-                const rowIndex = dt.row($(this).closest('tr')).index();
-                this.checked = selectedIndexes.includes(rowIndex);
-            });
-        }
-
-        function updateUrutanToolbarState() {
-            const naikBtn = document.getElementById('btn-naik-toolbar');
-            const turunBtn = document.getElementById('btn-turun-toolbar');
-            if (!naikBtn || !turunBtn) {
-                return;
-            }
-
-            const selected = getSelectedTagihanRow(false);
-            const urut = parseInt(selected?.FUrutan ?? selected?.furutan ?? '0', 10);
-            const canChange = !!selected && Number.isFinite(urut) && urut > 0;
-
-            naikBtn.disabled = !canChange;
-            turunBtn.disabled = !canChange;
-        }
-
-        function submitUbahUrutanDirect(direction) {
-            const selected = getSelectedTagihanRow();
-            if (!selected) {
-                return;
-            }
-
-            const urut = parseInt(selected?.FUrutan ?? selected?.furutan ?? '0', 10);
-            if (!Number.isFinite(urut) || urut <= 0) {
-                warningAlert('Tagihan dengan urutan 0 tidak dapat dinaikkan atau diturunkan.');
-                return;
-            }
-
-            const itemId = selected.item_id ?? selected.AA;
-            if (!itemId) {
-                warningAlert('Data tagihan tidak valid.');
-                return;
-            }
-
-            loadingAlert(direction === 'naik' ? 'Menaikkan urutan tagihan...' : 'Menurunkan urutan tagihan...');
-            let url = '{{route('admin.keuangan.tagihan-siswa.data-tagihan.ubah-urutan',':id')}}';
-            url = url.replace(':id', itemId);
-            const form = new FormData();
-            form.append('urutan_tagihan', direction);
-            form.append('custid', selected.CUSTID ?? '');
-
-            fetch(new Request(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                },
-                body: form
-            }))
-                .then(async response => {
-                    const data = await response.json().catch(() => ({}));
-                    if (!response.ok) {
-                        throw {status: response.status, message: data.message || response.statusText, errors: data.errors};
-                    }
-                    return data;
-                })
-                .then(data => {
-                    dataReload(dtOptions.tableId);
-                    successAlert(data.message || 'Urutan tagihan berhasil diubah.');
-                })
-                .catch(error => {
-                    errorAlert(error.message || 'Gagal mengubah urutan tagihan.');
-                });
-        }
-
-        function ensureUrutanToolbarButtons() {
-            const actionBar = document.querySelector(`#${dtOptions.tableId}_wrapper .dt-action-buttons`);
-            const dtButtons = actionBar?.querySelector('.dt-buttons');
-            const sourceToolbar = document.getElementById('tagihan-urutan-toolbar');
-            const naikBtn = document.getElementById('btn-naik-toolbar');
-            const turunBtn = document.getElementById('btn-turun-toolbar');
-
-            if (!actionBar || !dtButtons || !naikBtn || !turunBtn) {
-                return;
-            }
-
-            if (naikBtn.dataset.mounted !== '1') {
-                naikBtn.addEventListener('click', () => submitUbahUrutanDirect('naik'));
-                turunBtn.addEventListener('click', () => submitUbahUrutanDirect('turun'));
-                naikBtn.dataset.mounted = '1';
-            }
-
-            if (naikBtn.closest('.dt-action-buttons') !== actionBar) {
-                actionBar.insertBefore(turunBtn, dtButtons);
-                actionBar.insertBefore(naikBtn, turunBtn);
-            }
-
-            if (sourceToolbar && !sourceToolbar.children.length) {
-                sourceToolbar.remove();
-            }
-
-            updateUrutanToolbarState();
-        }
-
-        document.querySelector('#main_table tbody').addEventListener('click', function (e) {
-            if (e.target.closest('.btn-reversal')) {
-                const rowEl = e.target.closest('tr');
-                if (rowEl) {
-                    fillFormValue('form-delete', rowEl);
-                    const deleteId = document.getElementById('delete_id');
-                    if (deleteId?.value) {
-                        modalDelete.show();
-                    }
-                }
-            }
-            if (e.target.closest('.btn-hapus-tagihan')) {
-                const rowEl = e.target.closest('tr');
-                if (rowEl) {
-                    fillFormValue('form-hapus', rowEl);
-                    const hapusId = document.getElementById('hapus_id');
-                    if (hapusId && hapusId.value) {
-                        modalHapus.show();
-                    }
-                }
-            }
-        });
-
-        $(document).on('click', '#main_table tbody .btn-detail-trx', async function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const $rowEl = $(this).closest('tr');
-            const dtRow = DT[`${dtOptions.tableId}`].row($rowEl);
-            const rowData = dtRow.data();
-            if (!rowData) {
-                warningAlert('Data baris tidak ditemukan.');
-                return;
-            }
-
-            await toggleTransLogRow($rowEl, rowData, this);
-        });
-
-        function closeAllTransLogRows() {
-            $('#main_table tbody tr.trx-log-detail-row').remove();
-            $('#main_table tbody .btn-detail-trx').each(function () {
-                $(this).text('+');
-            });
-        }
-
-        window.ensureUrutanToolbarButtons = ensureUrutanToolbarButtons;
-        window.syncTagihanCheckboxSelection = syncTagihanCheckboxSelection;
-        window.updateUrutanToolbarState = updateUrutanToolbarState;
-        window.closeAllTransLogRows = closeAllTransLogRows;
-
-        async function toggleTransLogRow($rowEl, rowData, buttonEl) {
-            const billId = rowData.item_id ?? rowData.AA;
-            if (!billId) {
-                warningAlert('Data tagihan tidak valid.');
-                return;
-            }
-
-            const detailId = `trx-log-${billId}`;
-            const $existing = $(`#${detailId}`);
-            if ($existing.length) {
-                $existing.remove();
-                buttonEl.textContent = '+';
-                return;
-            }
-
-            closeAllTransLogRows();
-
-            let logs = Array.isArray(rowData.TRX_LOGS) ? rowData.TRX_LOGS : [];
-            if (!logs.length) {
-                logs = await fetchTransLog(rowData);
-                rowData.TRX_LOGS = logs;
-            }
-
-            const colCount = $rowEl.children('td').length || 1;
-            const detailHtml = buildTransLogHtml(rowData);
-            $rowEl.after(
-                `<tr class="trx-log-detail-row" id="${detailId}"><td colspan="${colCount}" class="p-0">${detailHtml}</td></tr>`
-            );
-            buttonEl.textContent = '-';
-        }
-
-        async function fetchTransLog(rowData) {
-            try {
-                const params = new URLSearchParams({
-                    custid: rowData.CUSTID ?? '',
-                    billnm: rowData.BILLNM ?? '',
-                    bill_transno: rowData.BILL_TRANSNO ?? ''
-                });
-                const aa = rowData.item_id ?? rowData.AA;
-                const url = `{{url('admin/keuangan/tagihan-siswa/data-tagihan/get-trans-log')}}/${aa}?${params.toString()}`;
-                const response = await fetch(url, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                    }
-                });
-                const result = await response.json().catch(() => ({}));
-                if (!response.ok) {
-                    throw new Error(result.message || `Gagal ambil log (${response.status})`);
-                }
-                return Array.isArray(result.logs) ? result.logs : [];
-            } catch (e) {
-                errorAlert(e.message || 'Gagal ambil log transaksi');
-                return [];
-            }
-        }
 
         function metodeBadge(metode) {
             const label = (metode ?? '-').toString().trim() || '-';
@@ -928,9 +558,7 @@
             return `<span class="badge trx-log-metode ${cls}">${label}</span>`;
         }
 
-        function buildTransLogHtml(rowData) {
-            const logs = Array.isArray(rowData.TRX_LOGS) ? rowData.TRX_LOGS : [];
-
+        function buildTransLogHtml(bill, logs) {
             const rows = logs.length
                 ? logs.map((log, idx) => {
                     const debet = Number(log.debet ?? 0);
@@ -967,10 +595,8 @@
                         <div class="trx-log-panel__title">
                             <i class="ri-history-line"></i> Riwayat Transaksi
                         </div>
-                        <span class="trx-log-chip"><strong>Tagihan:</strong> ${rowData.BILLNM ?? '-'}</span>
-                        <span class="trx-log-chip"><strong>NIS:</strong> ${rowData.NOCUST ?? '-'}</span>
-                        <span class="trx-log-chip"><strong>Nama:</strong> ${rowData.NMCUST ?? '-'}</span>
-                        <span class="trx-log-chip"><strong>AA:</strong> ${rowData.item_id ?? rowData.AA ?? '-'}</span>
+                        <span class="trx-log-chip"><strong>Tagihan:</strong> ${bill.BILLNM ?? '-'}</span>
+                        <span class="trx-log-chip"><strong>AA:</strong> ${bill.AA ?? '-'}</span>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-sm table-bordered table-hover trx-log-table mb-0">
@@ -993,6 +619,290 @@
             `;
         }
 
+        async function fetchTransLog(bill) {
+            try {
+                const params = new URLSearchParams({
+                    custid: bill.CUSTID ?? '',
+                    billnm: bill.BILLNM ?? '',
+                    bill_transno: bill.BILL_TRANSNO ?? ''
+                });
+                const url = `{{url('admin/keuangan/tagihan-siswa/data-tagihan/get-trans-log')}}/${bill.AA}?${params.toString()}`;
+                const response = await fetch(url, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    }
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw new Error(result.message || `Gagal ambil log (${response.status})`);
+                }
+                return Array.isArray(result.logs) ? result.logs : [];
+            } catch (e) {
+                errorAlert(e.message || 'Gagal ambil log transaksi');
+                return [];
+            }
+        }
+
+        async function toggleTransLogRow($billRow, bill, buttonEl) {
+            const detailId = `trx-log-${bill.AA}`;
+            const $existing = $(`#${detailId}`);
+            if ($existing.length) {
+                $existing.remove();
+                buttonEl.textContent = '+';
+                return;
+            }
+
+            $billRow.siblings('.trx-log-detail-row').remove();
+            $billRow.closest('table').find('.btn-bill-trx').text('+');
+
+            const logs = await fetchTransLog(bill);
+            const colCount = $billRow.children('td').length || 1;
+            const detailHtml = buildTransLogHtml(bill, logs);
+            $billRow.after(
+                `<tr class="trx-log-detail-row" id="${detailId}"><td colspan="${colCount}" class="p-0">${detailHtml}</td></tr>`
+            );
+            buttonEl.textContent = '-';
+        }
+
+        function billStatusBadge(bill) {
+            const paidst = parseInt(bill.PAIDST ?? 0, 10) || 0;
+            const sisa = Number(bill.BILLAM ?? 0);
+            const lunas = paidst === 1 || sisa <= 0;
+            return lunas
+                ? '<span class="badge badge-lunas">LUNAS</span>'
+                : '<span class="badge badge-belum-lunas">BELUM LUNAS</span>';
+        }
+
+        function buildBillsTableHtml(groupMeta, bills) {
+            const rows = bills.length
+                ? bills.map((bill) => {
+                    const urut = parseInt(bill.FUrutan ?? 0, 10) || 0;
+                    const billPaid = parseInt(bill.BILLPAID ?? 0, 10) || 0;
+                    const canReversal = billPaid > 0;
+                    const canHapus = !!bill.hapus;
+                    return `
+                    <tr data-aa="${bill.AA}" data-custid="${bill.CUSTID}">
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary btn-bill-trx">+</button>
+                        </td>
+                        <td>${bill.BILLNM ?? '-'}</td>
+                        <td class="text-end">${formatRupiah(bill.BILLAM_TOTAL)}</td>
+                        <td class="text-end">${formatRupiah(bill.BILLPAID)}</td>
+                        <td class="text-end">${formatRupiah(bill.BILLAM)}</td>
+                        <td>${bill.PAIDDT ?? '-'}</td>
+                        <td class="text-center">${billStatusBadge(bill)}</td>
+                        <td class="text-center">${urut}</td>
+                        <td class="text-center text-nowrap">
+                            <button type="button" class="btn btn-sm btn-outline-primary btn-bill-naik" ${urut > 0 ? '' : 'disabled'}>
+                                <span class="ri-arrow-up-line"></span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary btn-bill-turun" ${urut > 0 ? '' : 'disabled'}>
+                                <span class="ri-arrow-down-line"></span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-warning btn-bill-reversal" data-billnm="${bill.BILLNM ?? ''}" data-billam="${bill.BILLAM_TOTAL ?? 0}" ${canReversal ? '' : 'disabled'}>
+                                <span class="ri-arrow-go-back-line"></span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger btn-bill-hapus" data-billnm="${bill.BILLNM ?? ''}" data-billam="${bill.BILLAM_TOTAL ?? 0}" ${canHapus ? '' : 'disabled'}>
+                                <span class="ri-delete-bin-line"></span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                }).join('')
+                : '';
+
+            const tableBody = rows || `
+                <tr>
+                    <td colspan="9">
+                        <div class="bills-empty">Tidak ada tagihan pada periode ini</div>
+                    </td>
+                </tr>
+            `;
+
+            return `
+                <div class="bills-panel">
+                    <div class="bills-panel__header">
+                        <div class="bills-panel__title">
+                            <i class="ri-file-list-3-line"></i> Daftar Tagihan
+                        </div>
+                        <span class="trx-log-chip"><strong>NIS:</strong> ${groupMeta.NOCUST ?? '-'}</span>
+                        <span class="trx-log-chip"><strong>Nama:</strong> ${groupMeta.NMCUST ?? '-'}</span>
+                        <span class="trx-log-chip"><strong>Periode:</strong> ${groupMeta.BILLAC ?? '-'}</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered table-hover bills-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 48px;"></th>
+                                    <th>Nama Tagihan</th>
+                                    <th class="text-end">Jumlah Tagihan</th>
+                                    <th class="text-end">Terbayar</th>
+                                    <th class="text-end">Sisa</th>
+                                    <th>Tanggal Bayar</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Urutan</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>${tableBody}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function fetchBillsForGroup(custid, billac) {
+            try {
+                const params = new URLSearchParams({custid, billac});
+                const response = await fetch(`${billsUrl}?${params.toString()}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    }
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw new Error(result.message || `Gagal ambil tagihan (${response.status})`);
+                }
+                return Array.isArray(result.data) ? result.data : [];
+            } catch (e) {
+                errorAlert(e.message || 'Gagal ambil daftar tagihan');
+                return [];
+            }
+        }
+
+        function closeAllBillsRows() {
+            $('#main_table tbody tr.bills-detail-row').remove();
+            $('#main_table tbody .btn-detail-group').each(function () {
+                $(this).text('+');
+            });
+        }
+
+        window.closeAllBillsRows = closeAllBillsRows;
+
+        async function toggleBillsRow($rowEl, rowData, buttonEl) {
+            const custid = rowData.CUSTID;
+            const billac = rowData.BILLAC;
+            if (!custid || !billac) {
+                warningAlert('Data grup tagihan tidak valid.');
+                return;
+            }
+
+            const detailId = `bills-${custid}-${billac}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+            const $existing = $(`#${detailId}`);
+            if ($existing.length) {
+                $existing.remove();
+                buttonEl.textContent = '+';
+                return;
+            }
+
+            closeAllBillsRows();
+
+            const bills = await fetchBillsForGroup(custid, billac);
+            const colCount = $rowEl.children('td').length || 1;
+            const detailHtml = buildBillsTableHtml(rowData, bills);
+            $rowEl.after(
+                `<tr class="bills-detail-row" id="${detailId}"><td colspan="${colCount}" class="p-0">${detailHtml}</td></tr>`
+            );
+            buttonEl.textContent = '-';
+        }
+
+        $(document).on('click', '#main_table tbody .btn-detail-group', async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const $rowEl = $(this).closest('tr');
+            const dtRow = DT[`${dtOptions.tableId}`].row($rowEl);
+            const rowData = dtRow.data();
+            if (!rowData) {
+                warningAlert('Data baris tidak ditemukan.');
+                return;
+            }
+
+            await toggleBillsRow($rowEl, rowData, this);
+        });
+
+        function submitUbahUrutanBill(direction, aa, custid, $btn) {
+            loadingAlert(direction === 'naik' ? 'Menaikkan urutan tagihan...' : 'Menurunkan urutan tagihan...');
+            let url = '{{route('admin.keuangan.tagihan-siswa.data-tagihan.ubah-urutan',':id')}}';
+            url = url.replace(':id', aa);
+            const form = new FormData();
+            form.append('urutan_tagihan', direction);
+            form.append('custid', custid ?? '');
+
+            fetch(new Request(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: form
+            }))
+                .then(async response => {
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok) {
+                        throw {status: response.status, message: data.message || response.statusText};
+                    }
+                    return data;
+                })
+                .then(async data => {
+                    successAlert(data.message || 'Urutan tagihan berhasil diubah.');
+                    const $tr = $btn.closest('tr[data-aa]');
+                    const $detailRow = $btn.closest('tr.bills-detail-row');
+                    const $groupRow = $detailRow.prev('tr');
+                    if ($groupRow.length) {
+                        const dtRow = DT[`${dtOptions.tableId}`].row($groupRow);
+                        const rowData = dtRow.data();
+                        const bills = await fetchBillsForGroup(rowData.CUSTID, rowData.BILLAC);
+                        $detailRow.find('td').first().html(buildBillsTableHtml(rowData, bills));
+                    }
+                })
+                .catch(error => {
+                    errorAlert(error.message || 'Gagal mengubah urutan tagihan.');
+                });
+        }
+
+        $(document).on('click', '.btn-bill-naik, .btn-bill-turun', function () {
+            const $btn = $(this);
+            const $tr = $btn.closest('tr[data-aa]');
+            const aa = $tr.data('aa');
+            const custid = $tr.data('custid');
+            const direction = $btn.hasClass('btn-bill-naik') ? 'naik' : 'turun';
+            submitUbahUrutanBill(direction, aa, custid, $btn);
+        });
+
+        $(document).on('click', '.btn-bill-trx', async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const $tr = $(this).closest('tr[data-aa]');
+            const aa = $tr.data('aa');
+            const custid = $tr.data('custid');
+            const billnm = $tr.find('td').eq(1).text();
+            await toggleTransLogRow($tr, {AA: aa, CUSTID: custid, BILLNM: billnm}, this);
+        });
+
+        $(document).on('click', '.btn-bill-reversal', function () {
+            const $tr = $(this).closest('tr[data-aa]');
+            document.getElementById('nocust').value = $tr.closest('.bills-panel').find('.trx-log-chip:eq(0)').text().replace('NIS:', '').trim();
+            document.getElementById('nmcust').value = $tr.closest('.bills-panel').find('.trx-log-chip:eq(1)').text().replace('Nama:', '').trim();
+            document.getElementById('billnm').value = $(this).data('billnm') ?? '';
+            document.getElementById('billam').value = $(this).data('billam') ?? '';
+            document.getElementById('delete_id').value = $tr.data('aa');
+            document.getElementById('user_delete_id').value = $tr.data('custid');
+            modalDelete.show();
+        });
+
+        $(document).on('click', '.btn-bill-hapus', function () {
+            const $tr = $(this).closest('tr[data-aa]');
+            document.getElementById('hapus_nocust').value = $tr.closest('.bills-panel').find('.trx-log-chip:eq(0)').text().replace('NIS:', '').trim();
+            document.getElementById('hapus_nmcust').value = $tr.closest('.bills-panel').find('.trx-log-chip:eq(1)').text().replace('Nama:', '').trim();
+            document.getElementById('hapus_billnm').value = $(this).data('billnm') ?? '';
+            document.getElementById('hapus_billam').value = $(this).data('billam') ?? '';
+            document.getElementById('hapus_id').value = $tr.data('aa');
+            document.getElementById('user_hapus_id').value = $tr.data('custid');
+            modalHapus.show();
+        });
+
         document.getElementById('form-delete').addEventListener('submit', function (e) {
             e.preventDefault();
             submitForm('delete');
@@ -1002,12 +912,6 @@
             e.preventDefault();
             submitForm('hapus');
         });
-
-        document.getElementById('form-ubah-urutan').addEventListener('submit', function (e) {
-            e.preventDefault();
-            submitForm('ubah-urutan');
-        })
-
 
         function submitForm(form) {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -1049,22 +953,6 @@
                         }),
                     });
                     break;
-                case'ubah-urutan':
-                    loadingAlert('Mengubah Urutan....');
-                    item_id = document.getElementById('urutan_tagihan_id').value;
-                    user_id = document.getElementById('user_urutan_tagihan_id').value;
-                    url = '{{route('admin.keuangan.tagihan-siswa.data-tagihan.ubah-urutan',':id')}}';
-                    url = url.replace(':id', item_id);
-                    const urutForm = document.getElementById('form-ubah-urutan');
-                    const form = new FormData(urutForm)
-                    request = new Request(
-                        url, {
-                            method: "POST",
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken,
-                            }, body: form
-                        });
-                    break;
                 default:
                     errorAlert('Data tidak valid!');
                     return;
@@ -1083,7 +971,6 @@
                     successAlert(data.message);
                     modalDelete.hide();
                     modalHapus.hide();
-                    modalUrut.hide();
                 })
                 .catch(error => {
                     if (error.status === 422) {
@@ -1106,99 +993,10 @@
                 });
         }
 
-        $(document).on('change', '#main_table .checkbox-siswa', function (e) {
-            e.stopPropagation();
-            const dt = DT[`${dtOptions.tableId}`];
-            if (!dt) {
-                return;
-            }
-
-            const $row = $(this).closest('tr');
-            if (this.checked) {
-                $('#main_table .checkbox-siswa').not(this).prop('checked', false);
-                dt.rows().deselect();
-                dt.row($row).select();
-            } else {
-                dt.row($row).deselect();
-            }
-            updateUrutanToolbarState();
-        });
-
         document.addEventListener("DOMContentLoaded", function () {
-            document.addEventListener('click', function (e) {
-                if (e.target.closest('.paginate_button, .buttons-excel, .buttons-pdf, .buttons-print')) {
-                    setTimeout(ensureUrutanToolbarButtons, 120);
-                }
-            });
-
-            $(document).on('click', '.btn-print-rekap', function (e) {
-                loadingAlert(`Membuat Rekap ... <br> Proses ini membutuhkan waktu beberapa saat<br><hr>
-                    <p><span class="badge badge-dot bg-danger me-1"></span> Pastikan browser anda tidak memblokir <i>POP-UP</i>! </p>
-                `);
-                let data = $(`#${dtOptions.formId}`).serialize();
-                if (data) {
-                    const csrfToken = $('meta[name="csrf-token"]').attr('content')
-                    let ajaxOptions = {
-                        url: '{{route('admin.keuangan.tagihan-siswa.data-tagihan.cetak-rekap')}}',
-                        type: 'get',
-                        data: data,
-                        datatype: 'json',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                        },
-                        contentType: false,
-                        processData: true,
-                        cache: false,
-                        xhrFields: {
-                            responseType: 'blob'
-                        },
-                        timeout: 180000
-                    }
-                    $.ajax(ajaxOptions).done(function (response, status, xhr) {
-                        try {
-                            let blob = new Blob([response], {type: 'application/pdf'});
-                            if (typeof window.navigator.msSaveBlob !== 'undefined') {
-                                window.navigator.msSaveBlob(blob, filename);
-                            } else {
-                                let URL = window.URL || window.webkitURL;
-                                let previewUrl = URL.createObjectURL(blob);
-                                window.open(previewUrl, '_blank');
-                            }
-
-                        } catch (ex) {
-                            console.log(ex);
-                        }
-                        successAlert('File tagihan terbuka pada tab baru');
-                    }).fail(function (xhr) {
-                        if (xhr.status === 422) {
-                            const errMessage = response.message || xhr.responseJSON.message;
-                            errorAlert(errMessage)
-                        } else {
-                            const errMessages = {
-                                401: 'Anda tidak memiliki izin untuk mengakses halaman ini 😖',
-                                403: 'Anda tidak memiliki izin untuk mengakses halaman ini 😖',
-                                404: 'Halaman yang dituju tidak ditemukan 🧐',
-                                405: 'Metode tidak valid 🧐 <br>silahkan muat ulang halaman dan coba lagi!',
-                                419: 'token anda sudah tidak valid 🙏 <br>Silahkan muat ulang halaman untuk mendapat token baru!',
-                                429: 'Terlalu banyak permintaan akses <br>silahkan tunggu beberapa saat 🙏',
-                                '5xx': 'Terjadi kesalahan saat memproses permintaan 😵‍💫. <br> silahkan muat ulang halaman'
-                            };
-                            const errMessage =
-                                errMessages[xhr.status] ||
-                                (xhr.status >= 500 && xhr.status <= 504 ? errMessages['5xx'] :
-                                    'Tidak dapat terhubung ke server <br> Silahkan coba muat ulang halaman atau periksa koneksi internet anda.');
-                            errorAlert(errMessage);
-                        }
-                    })
-                } else {
-                    warningAlert('Isikan form')
-                }
-            });
-
             if (select2.length) {
                 select2.each(function () {
                     let $this = $(this);
-                    // select2Focus($this);
                     $this.wrap('<div class="position-relative"></div>').select2({
                         placeholder: 'Select value',
                         dropdownParent: $this.parent()
@@ -1306,7 +1104,6 @@
                     });
                     const availableWidth = getContentWidth('A4', orientation, pageMargins);
 
-                    // Header (shared)
                     const headerTable = {
                         alignment: 'center',
                         table: {
@@ -1342,7 +1139,6 @@
                         layout: 'noBorders'
                     };
 
-                    // Footer (shared)
                     const footer = {
                         columns: [
                             {text: '', width: '*'},
@@ -1365,7 +1161,6 @@
                         ]
                     };
 
-                    // Combine all content
                     const content = [
                         headerTable,
                         {
@@ -1388,7 +1183,6 @@
                         footer
                     ];
 
-                    // PDF definition
                     const docDefinition = {
                         info: {
                             title: String(title || 'KARTU TAGIHAN SISWA').toUpperCase(),
@@ -1424,16 +1218,12 @@
                 e.preventDefault();
                 loadingAlert('Membuat Kartu Siswa');
                 let url = '{{route('admin.keuangan.tagihan-siswa.data-tagihan.cetak-kartu-siswa')}}';
-                const form = new FormData(document.getElementById('filter-form'));
-                const params = new URLSearchParams();
-                for (const [key, value] of form.entries()) {
-                    params.append(key, value);
-                }
                 let data = DT[`${dtOptions.tableId}`].rows({selected: true}).data();
                 if (!data[0]) {
                     warningAlert('silahkan pilih siswa!')
                     return;
                 }
+                const params = new URLSearchParams();
                 params.append('custid', data[0].CUSTID)
                 const unit = data[0].CODE02;
                 const fullUrl = `${url}?${params.toString()}`;
@@ -1460,12 +1250,6 @@
                     }
                     const data = await generateKartuSiswa(result);
                     const pdf = await generatePdf('KARTU TAGIHAN SISWA', data, unit)
-                    // if (!result['tagihans'] || result['tagihans'].length === 0) {
-                    //     console.log('kosong');
-                    //     const error = new Error("Data Tagihan Kosong");
-                    //     error.status = 422;
-                    //     throw error;
-                    // }
 
                     if (pdf) {
                         successAlert('Sukses, Rekap telah dicetak');
@@ -1724,7 +1508,6 @@
                 const key = String(pageSize).toUpperCase();
                 const size = sizes[key] || sizes.A4;
 
-                // swap width/height for landscape
                 const pageW = orientation === 'landscape' ? size[1] : size[0];
                 const [ml, , mr] = margins;
                 return pageW - ml - mr;
