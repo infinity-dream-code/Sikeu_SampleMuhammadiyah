@@ -48,33 +48,7 @@
             { data: 'JUMLAH_TAGIHAN', name: 'Jml Item', className: 'text-end' },
             { data: 'BILLAM_TOTAL', name: 'Jumlah Tagihan', className: 'text-end' },
             { data: 'BILLPAID', name: 'Jumlah Terbayar', className: 'text-end' },
-            { data: 'SISA', name: 'Sisa Tagihan', className: 'text-end' },
-            { 
-                data: null,
-                name: 'Urutan',
-                orderable: false,
-                className: 'text-center',
-                render: function(data, type, row) {
-                    if (type === 'display') {
-                        return '<button type="button" class="btn btn-sm btn-outline-primary btn-bill-naik" disabled><span class="ri-arrow-up-line"></span></button> ' +
-                               '<button type="button" class="btn btn-sm btn-outline-primary btn-bill-turun" disabled><span class="ri-arrow-down-line"></span></button>';
-                    }
-                    return data;
-                }
-            },
-            { 
-                data: null,
-                name: 'Aksi',
-                orderable: false,
-                className: 'text-center',
-                render: function(data, type, row) {
-                    if (type === 'display') {
-                        return '<button type="button" class="btn btn-sm btn-warning btn-bill-reversal" disabled><span class="ri-arrow-go-back-line"></span></button> ' +
-                               '<button type="button" class="btn btn-sm btn-danger btn-bill-hapus" disabled><span class="ri-delete-bin-line"></span></button>';
-                    }
-                    return data;
-                }
-            }
+            { data: 'SISA', name: 'Sisa Tagihan', className: 'text-end' }
         ];
 
         var dtOptions = {
@@ -85,6 +59,7 @@
             prefetchedColumns: dataColumns,
             dataColumns: dataColumns,
             destroy: true,
+            retrieve: true,
             thead: true,
             tfoot: false,
             scrollX: true,
